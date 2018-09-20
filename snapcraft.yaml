@@ -66,11 +66,10 @@ parts:
       - uwsgi
       - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
     install: |
-      export PYTHON_PART_INSTALL="/root/build_microstack/parts/keystone/install"
-      touch $PYTHON_PART_INSTALL/lib/python2.7/site-packages/paste/__init__.py
-      touch $PYTHON_PART_INSTALL/lib/python2.7/site-packages/repoze/__init__.py
+      touch $SNAPCRAFT_PART_INSTALL/lib/python2.7/site-packages/paste/__init__.py
+      touch $SNAPCRAFT_PART_INSTALL/lib/python2.7/site-packages/repoze/__init__.py
       export SNAP_ROOT="../../.."
-      export SNAP_SITE_PACKAGES="$PYTHON_PART_INSTALL/lib/python2.7/site-packages"
+      export SNAP_SITE_PACKAGES="$SNAPCRAFT_PART_INSTALL/lib/python2.7/site-packages"
       patch -d $SNAP_SITE_PACKAGES -p1 < $SNAP_ROOT/patches/oslo-config-dirs.patch
     build-packages:
       - gcc
@@ -105,7 +104,7 @@ parts:
     source: http://www.nginx.org/download/nginx-1.13.0.tar.gz
     plugin: autotools
     configflags:
-      - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr
+      - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/usr
       - --http-log-path=/var/snap/keystone/common/log/nginx-access.log
       - --error-log-path=/var/snap/keystone/common/log/nginx-error.log
       - --lock-path=/var/snap/keystone/common/lock/nginx.lock
