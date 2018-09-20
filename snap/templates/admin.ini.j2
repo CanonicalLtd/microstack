@@ -1,0 +1,11 @@
+[uwsgi]
+wsgi-file = {{ snap }}/bin/keystone-wsgi-admin
+uwsgi-socket = {{ snap_common }}/run/admin.sock
+buffer-size = 65535
+master = true
+enable-threads = true
+processes = 4
+thunder-lock = true
+lazy-apps = true
+home = {{ snap }}/usr
+pyargv = {{ pyargv }}
