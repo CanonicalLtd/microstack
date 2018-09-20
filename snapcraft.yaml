@@ -103,8 +103,7 @@ parts:
     prime: [$etc]
   nginx:
     source: http://www.nginx.org/download/nginx-1.13.0.tar.gz
-    plugin: python
-    python-version: python2
+    plugin: autotools
     configflags:
       - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr
       - --http-log-path=/var/snap/keystone/common/log/nginx-access.log
@@ -120,8 +119,7 @@ parts:
     build-packages:
       - libpcre3-dev
       - libssl-dev
-    python-packages:
-      - six
+      - python-six
     prepare: |
       export SNAP_ROOT="../../.."
       export SNAP_SOURCE="$SNAP_ROOT/parts/nginx/build"
