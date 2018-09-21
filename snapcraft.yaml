@@ -143,6 +143,69 @@ apps:
     plugs:
       - network-bind
 
+  # Openvswitch
+  ovs-vswitchd:
+    command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server --no-monitor --system-id=random start
+    stop-command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server stop
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: forking
+    plugs:
+      - network
+      - network-bind
+      - network-control
+      - openvswitch-support
+      - process-control
+      - system-trace
+  ovsdb-server:
+    command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovs-vswitchd --no-monitor --system-id=random start
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    stop-command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovs-vswitchd stop
+    daemon: forking
+    plugs:
+      - network
+      - network-bind
+      - network-control
+      - openvswitch-support
+      - process-control
+      - system-trace
+  ovs-vsctl:
+    command: ovs-wrapper $SNAP/bin/ovs-vsctl
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network
+  ovs-appctl:
+    command: ovs-wrapper $SNAP/bin/ovs-appctl
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C    
+    plugs:
+      - network
+  ovs-ofctl:
+    command: ovs-wrapper $SNAP/bin/ovs-ofctl
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C    
+    plugs:
+      - network
+  ovs-dpctl:
+    command: ovs-wrapper $SNAP/bin/ovs-dpctl
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C    
+    plugs:
+      - network
 
   # Libvirt/Qemu
   libvirt-bin:
@@ -304,14 +367,55 @@ parts:
     stage: [$etc]
     prime: [$etc]
 
+  # Openvswitch
+  ovs-patches:
+    source: snap/patches/
+    plugin: dump
+    organize:
+      '*' : patches/
+    prime:
+      - -*
+
+  openvswitch:
+    # TODO: figure out a better way to fetch the version
+    source: http://openvswitch.org/releases/openvswitch-2.10.0.tar.gz
+    plugin: autotools
+    build-packages:
+      - libssl-dev
+      - libnuma-dev
+      - libcap-ng-dev
+      - libpcap-dev
+      - libunbound-dev
+      - python-all
+      - python-six
+      - python-setuptools
+    stage-packages:
+      - uuid-runtime
+    configflags:
+      - "--localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common"
+      - "--sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/etc"
+    after:
+      - ovs-patches
+    prepare: |
+      # Apply patches
+      for patch in ${SNAPCRAFT_STAGE}/patches/openvswitch/*.patch; do
+        echo "Applying $(basename "$patch") ..."
+        patch \
+          --batch \
+          --forward \
+          --strip 1 \
+          --input "$patch"
+        echo
+      done
+
   # Openstack Shared Parts
   templates:
-    after: [keystone, nova, neutron]
+    after: [keystone, nova, neutron, openvswitch]
     plugin: dump
     source: snap
 
   nginx:
-    after: [keystone, nova, neutron]
+    after: [keystone, nova, neutron, openvswitch]
     source: http://www.nginx.org/download/nginx-1.13.0.tar.gz
     plugin: autotools
     configflags:

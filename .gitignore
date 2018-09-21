@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Snap
+microstack*.snap
+microstack_source.tar.bz2
+prime/
+snap/.snapcraft
+stage/
+
 # Emacs
 *~
 
