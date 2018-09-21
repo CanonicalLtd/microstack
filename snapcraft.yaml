@@ -103,6 +103,35 @@ apps:
     plugs:
       - network
 
+  # Glance
+  glance-api:
+    command: snap-openstack glance-api
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network-bind
+  registry:
+    command: snap-openstack glance-registry
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+  glance-manage:
+    command: snap-openstack glance-manage
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network
+
   # Openstack Shared Services
   nginx:
     command: snap-openstack nginx
@@ -233,6 +262,45 @@ parts:
     filesets:
       etc:
         - etc/neutron/*
+    stage: [$etc]
+    prime: [$etc]
+
+  # Glance
+  glance:
+    after: [keystone]  # We arbitrarily rely on keystone to patch some things    
+    plugin: python
+    python-version: python2
+    source: http://tarballs.openstack.org/glance/glance-stable-ocata.tar.gz
+    python-packages:
+      - httplib2
+      - os-brick
+      - oslo.rootwrap
+      - oslo.vmware
+      - pymysql
+      - python-cinderclient
+      - python-memcached
+      - python-swiftclient
+      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    build-packages:
+      - gcc
+      - libffi-dev
+      - libssl-dev
+      - libxml2-dev
+      - libxslt1-dev
+  glance-config:
+    after: [glance]
+    plugin: dump
+    source: http://tarballs.openstack.org/glance/glance-stable-ocata.tar.gz
+    organize:
+      etc/*.conf: etc/glance/
+      etc/*.ini: etc/glance/
+      etc/*.json: etc/glance/
+    filesets:
+      etc:
+        - etc/glance/*.conf
+        - etc/glance/*.ini
+        - etc/glance/*.json
     stage: [$etc]
     prime: [$etc]
 

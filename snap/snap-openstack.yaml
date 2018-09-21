@@ -8,9 +8,11 @@ setup:
     - "{snap_common}/etc/neutron/rootwrap.d"
     - "{snap_common}/etc/nginx/sites-enabled"
     - "{snap_common}/etc/nginx/snap/sites-enabled"
+    - "{snap_common}/etc/glance/glance.conf.d"    
     - "{snap_common}/etc/uwsgi/snap"
     - "{snap_common}/fernet-keys"
     - "{snap_common}/lib"
+    - "{snap_common}/lib/images"    
     - "{snap_common}/lock"
     - "{snap_common}/log"
     - "{snap_common}/run"
@@ -21,6 +23,7 @@ setup:
     nginx.conf.j2: "{snap_common}/etc/nginx/snap/nginx.conf"
     nova-snap.conf.j2: "{snap_common}/etc/nova/nova.conf.d/nova-snap.conf"
     nova-nginx.conf.j2: "{snap_common}/etc/nginx/snap/sites-enabled/nova.conf"
+    glance-snap.conf.j2: "{snap_common}/etc/glance/glance.conf.d/glance-snap.conf"    
 entry_points:
   keystone-manage:
     binary: "{snap}/bin/keystone-manage"
@@ -129,3 +132,29 @@ entry_points:
     config-dirs:
       - "{snap_common}/etc/neutron/neutron.conf.d"
     log-file: "{snap_common}/log/neutron-server.log"
+  glance-manage:
+    binary: "{snap}/bin/glance-manage"
+    config-files:
+      - "{snap}/etc/glance/glance-manage.conf"
+    config-files-override:
+      - "{snap_common}/etc/glance/glance-manage.conf"
+    config-dirs:
+      - "{snap_common}/etc/glance/glance.conf.d"
+  glance-registry:
+    binary: "{snap}/bin/glance-registry"
+    config-files:
+      - "{snap}/etc/glance/glance-registry.conf"
+    config-files-override:
+      - "{snap_common}/etc/glance/glance-registry.conf"
+    config-dirs:
+      - "{snap_common}/etc/glance/glance.conf.d"
+    log-file: "{snap_common}/log/glance-registry.log"
+  glance-api:
+    binary: "{snap}/bin/glance-api"
+    config-files:
+      - "{snap}/etc/glance/glance-api.conf"
+    config-files-override:
+      - "{snap_common}/etc/glance/glance-api.conf"
+    config-dirs:
+      - "{snap_common}/etc/glance/glance.conf.d"
+    log-file: "{snap_common}/log/glance-api.log"
