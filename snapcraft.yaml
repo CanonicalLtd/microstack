@@ -10,7 +10,7 @@ confinement: classic
 
 apps:
   # Keystone
-  uwsgi:
+  keystone-uwsgi:
     command: snap-openstack keystone-uwsgi
     environment:
       LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
@@ -19,16 +19,7 @@ apps:
     daemon: simple
     plugs:
       - network-bind
-  nginx:
-    command: snap-openstack keystone-nginx
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
-    daemon: forking
-    plugs:
-      - network-bind
-  manage:
+  keystone-manage:
     command: snap-openstack keystone-manage
     environment:
       LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
@@ -36,6 +27,93 @@ apps:
       LC_ALL: C
     plugs:
       - network
+
+  # Nova
+  nova-uwsgi:
+    command: snap-openstack nova-uwsgi
+    daemon: simple
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+      OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
+    plugs:
+      - network-bind
+  nova-api:
+    command: snap-openstack nova-api-os-compute
+    daemon: simple
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network-bind
+  conductor:
+    command: snap-openstack nova-conductor
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network
+  scheduler:
+    command: snap-openstack nova-scheduler
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network
+  consoleauth:
+    command: snap-openstack nova-consoleauth
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network
+  nova-manage:
+    command: snap-openstack nova-manage
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network
+
+  # Neutron
+  neutron-api:
+    command: snap-openstack neutron-server
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network-bind
+  neutron-manage:
+    command: snap-openstack neutron-db-manage
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network
+
+  # Openstack Shared Services
+  nginx:
+    command: snap-openstack nginx
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: forking
+    plugs:
+      - network-bind
+
 
   # Libvirt/Qemu
   libvirt-bin:
@@ -56,7 +134,7 @@ parts:
   keystone:
     plugin: python
     python-version: python2
-    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt    
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
     source: http://tarballs.openstack.org/keystone/keystone-stable-ocata.tar.gz
     python-packages:
       - mysql-python
@@ -78,12 +156,7 @@ parts:
       - libssl-dev
       - libsqlite3-dev
 
-  templates:
-    after: [keystone]
-    plugin: dump
-    source: snap
-
-  config:
+  keystone-config:
     after: [keystone]
     plugin: dump
     source: http://tarballs.openstack.org/keystone/keystone-stable-ocata.tar.gz
@@ -100,20 +173,90 @@ parts:
         - etc/keystone/*.templates
     stage: [$etc]
     prime: [$etc]
+
+  # Nova
+  nova:
+    after: [keystone]  # We abitrarily rely on keystone to be the one to patch things
+    plugin: python
+    python-version: python2
+    source: http://tarballs.openstack.org/nova/nova-stable-ocata.tar.gz
+    python-packages:
+      - pymysql
+      - uwsgi
+      - python-memcached
+      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    build-packages:
+      - gcc
+      - libffi-dev
+      - libssl-dev
+      - libxml2-dev
+      - libxslt1-dev
+
+  nova-config:
+    after: [nova]
+    plugin: dump
+    source: http://tarballs.openstack.org/nova/nova-stable-ocata.tar.gz
+    filesets:
+      etc:
+        - etc/nova/*.conf
+        - etc/nova/*.ini
+        - etc/nova/*.json
+        - etc/nova/rootwrap.d
+    stage: [$etc]
+    prime: [$etc]
+
+  neutron:
+    after: [keystone]  # We arbitrarily rely on keystone to patch some things
+    plugin: python
+    python-version: python2
+    source: http://tarballs.openstack.org/neutron/neutron-stable-ocata.tar.gz
+    python-packages:
+      - pymysql
+      - python-memcached
+      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    build-packages:
+      - gcc
+      - libffi-dev
+      - libssl-dev
+
+  neutron-config:
+    after: [neutron]
+    plugin: dump
+    source: http://tarballs.openstack.org/neutron/neutron-stable-ocata.tar.gz
+    organize:
+      etc/*.conf: etc/neutron/
+      etc/*.ini: etc/neutron/
+      etc/*.json: etc/neutron/
+      etc/rootwrap.d/*: etc/neutron/rootwrap.d/
+    filesets:
+      etc:
+        - etc/neutron/*
+    stage: [$etc]
+    prime: [$etc]
+
+  # Openstack Shared Parts
+  templates:
+    after: [keystone, nova, neutron]
+    plugin: dump
+    source: snap
+
   nginx:
+    after: [keystone, nova, neutron]
     source: http://www.nginx.org/download/nginx-1.13.0.tar.gz
     plugin: autotools
     configflags:
-      - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/usr
-      - --http-log-path=/var/snap/keystone/common/log/nginx-access.log
-      - --error-log-path=/var/snap/keystone/common/log/nginx-error.log
-      - --lock-path=/var/snap/keystone/common/lock/nginx.lock
-      - --pid-path=/var/snap/keystone/common/run/nginx.pid
-      - --http-client-body-temp-path=/var/snap/keystone/common/lib/nginx_client_body
-      - --http-proxy-temp-path=/var/snap/keystone/common/lib/nginx_proxy
-      - --http-fastcgi-temp-path=/var/snap/keystone/common/lib/nginx_fastcgi
-      - --http-uwsgi-temp-path=/var/snap/keystone/common/lib/nginx_uwsgi
-      - --http-scgi-temp-path=/var/snap/keystone/common/lib/nginx_scgi
+      - --prefix=/usr
+      - --http-log-path=/var/snap/microstack/common/log/nginx-access.log
+      - --error-log-path=/var/snap/microstack/common/log/nginx-error.log
+      - --lock-path=/var/snap/microstack/common/lock/nginx.lock
+      - --pid-path=/var/snap/microstack/common/run/nginx.pid
+      - --http-client-body-temp-path=/var/snap/microstack/common/lib/nginx_client_body
+      - --http-proxy-temp-path=/var/snap/microstack/common/lib/nginx_proxy
+      - --http-fastcgi-temp-path=/var/snap/microstack/common/lib/nginx_fastcgi
+      - --http-uwsgi-temp-path=/var/snap/microstack/common/lib/nginx_uwsgi
+      - --http-scgi-temp-path=/var/snap/microstack/common/lib/nginx_scgi
       - --with-http_ssl_module
     build-packages:
       - libpcre3-dev
@@ -123,6 +266,7 @@ parts:
       export SNAP_ROOT="../../.."
       export SNAP_SOURCE="$SNAP_ROOT/parts/nginx/build"
       patch -d $SNAP_SOURCE -p1 < $SNAP_ROOT/patches/drop-nginx-setgroups.patch
+
   libxml2:
     source: http://xmlsoft.org/sources/libxml2-2.9.4.tar.gz
     plugin: autotools
