@@ -1,0 +1,39 @@
+user root root;
+worker_processes auto;
+pid {{ snap_common }}/run/nginx.pid;
+
+events {
+        worker_connections 768;
+}
+
+http {
+        ##
+        # Basic Settings
+        ##
+
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+
+        include {{ snap }}/usr/conf/mime.types;
+        default_type application/octet-stream;
+
+        ##
+        # Logging Settings
+        ##
+
+        access_log {{ snap_common }}/log/nginx-access.log;
+        error_log {{ snap_common }}/log/nginx-error.log;
+
+        ##
+        # Gzip Settings
+        ##
+
+        gzip on;
+        gzip_disable "msie6";
+
+        include {{ snap_common }}/etc/nginx/conf.d/*.conf;
+        include {{ snap_common }}/etc/nginx/snap/sites-enabled/*;
+}

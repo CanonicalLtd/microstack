@@ -1,0 +1,31 @@
+From fdf38dcad424c00d39b5c128ddb06b93606a639b Mon Sep 17 00:00:00 2001
+From: James Page <james.page@ubuntu.com>
+Date: Wed, 19 Sep 2018 09:13:48 +0200
+Subject: [PATCH] ovs-kmod-ctl: source ovs-lib dynamically
+
+Determine installation location of ovs-lib using runtime location
+of script, rather than build-time parameters.
+---
+ utilities/ovs-kmod-ctl.in | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/utilities/ovs-kmod-ctl.in b/utilities/ovs-kmod-ctl.in
+index 13ccfcf73..19f100964 100644
+--- a/utilities/ovs-kmod-ctl.in
++++ b/utilities/ovs-kmod-ctl.in
+@@ -14,7 +14,11 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-. "@pkgdatadir@/scripts/ovs-lib" || exit 1
++case $0 in
++    */*) dir0=`echo "$0" | sed 's,/[^/]*$,,'` ;;
++    *) dir0=./ ;;
++esac
++. "$dir0/ovs-lib" || exit 1
+ 
+ for dir in "$sbindir" "$bindir" /sbin /bin /usr/sbin /usr/bin; do
+     case :$PATH: in
+-- 
+2.17.1
+

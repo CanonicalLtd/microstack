@@ -1,0 +1,160 @@
+setup:
+  dirs:
+    - "{snap_common}/etc/keystone/keystone.conf.d"
+    - "{snap_common}/etc/nova/nova.conf.d"
+    - "{snap_common}/etc/neutron/neutron.conf.d"
+    - "{snap_common}/etc/neutron/plugins/ml2"
+    - "{snap_common}/etc/neutron/policy.d"
+    - "{snap_common}/etc/neutron/rootwrap.d"
+    - "{snap_common}/etc/nginx/sites-enabled"
+    - "{snap_common}/etc/nginx/snap/sites-enabled"
+    - "{snap_common}/etc/glance/glance.conf.d"    
+    - "{snap_common}/etc/uwsgi/snap"
+    - "{snap_common}/fernet-keys"
+    - "{snap_common}/lib"
+    - "{snap_common}/lib/images"    
+    - "{snap_common}/lock"
+    - "{snap_common}/log"
+    - "{snap_common}/run"
+  templates:
+    keystone-nginx.conf.j2: "{snap_common}/etc/nginx/snap/sites-enabled/keystone.conf"
+    keystone-snap.conf.j2: "{snap_common}/etc/keystone/keystone.conf.d/keystone-snap.conf"
+    neutron-snap.conf.j2: "{snap_common}/etc/neutron/neutron.conf.d/neutron-snap.conf"
+    nginx.conf.j2: "{snap_common}/etc/nginx/snap/nginx.conf"
+    nova-snap.conf.j2: "{snap_common}/etc/nova/nova.conf.d/nova-snap.conf"
+    nova-nginx.conf.j2: "{snap_common}/etc/nginx/snap/sites-enabled/nova.conf"
+    glance-snap.conf.j2: "{snap_common}/etc/glance/glance.conf.d/glance-snap.conf"    
+entry_points:
+  keystone-manage:
+    binary: "{snap}/bin/keystone-manage"
+    config-files:
+      - "{snap}/etc/keystone/keystone.conf"
+    config-files-override:
+      - "{snap_common}/etc/keystone/keystone.conf"
+    config-dirs:
+      - "{snap_common}/etc/keystone/keystone.conf.d"
+  keystone-uwsgi:
+    type: uwsgi
+    uwsgi-dir: "{snap_common}/etc/uwsgi/snap"
+    uwsgi-dir-override: "{snap_common}/etc/uwsgi"
+    uwsgi-log: "{snap_common}/log/uwsgi.log"
+    config-files:
+      - "{snap}/etc/keystone/keystone.conf"
+    config-files-override:
+      - "{snap_common}/etc/keystone/keystone.conf"
+    config-dirs:
+      - "{snap_common}/etc/keystone/keystone.conf.d"
+    log-file: "{snap_common}/log/keystone.log"
+    templates:
+      admin.ini.j2: "{snap_common}/etc/uwsgi/snap/admin.ini"
+      public.ini.j2: "{snap_common}/etc/uwsgi/snap/public.ini"
+  nginx:
+    type: nginx
+    config-file: "{snap_common}/etc/nginx/snap/nginx.conf"
+    config-file-override: "{snap_common}/etc/nginx/nginx.conf"
+  nova-api-os-compute:
+    binary: "{snap}/bin/nova-api-os-compute"
+    config-files:
+      - "{snap}/etc/nova/nova.conf"
+    config-files-override:
+      - "{snap_common}/etc/nova/nova.conf"
+    config-dirs:
+      - "{snap_common}/etc/nova/nova.conf.d"
+    log-file: "{snap_common}/log/nova-api-os-compute.log"
+  nova-uwsgi:
+    type: uwsgi
+    uwsgi-dir: "{snap_common}/etc/uwsgi/snap"
+    uwsgi-dir-override: "{snap_common}/etc/uwsgi"
+    uwsgi-log: "{snap_common}/log/uwsgi.log"
+    config-files:
+      - "{snap}/etc/nova/nova.conf"
+    config-files-override:
+      - "{snap_common}/etc/nova/nova.conf"
+    config-dirs:
+      - "{snap_common}/etc/nova/nova.conf.d"
+    log-file: "{snap_common}/log/nova-placement-api.log"
+    templates:
+      nova-placement-api.ini.j2:
+        "{snap_common}/etc/uwsgi/snap/nova-placement-api.ini"
+  nova-conductor:
+    binary: "{snap}/bin/nova-conductor"
+    config-files:
+      - "{snap}/etc/nova/nova.conf"
+    config-files-override:
+      - "{snap_common}/etc/nova/nova.conf"
+    config-dirs:
+      - "{snap_common}/etc/nova/nova.conf.d"
+    log-file: "{snap_common}/log/nova-conductor.log"
+  nova-scheduler:
+    binary: "{snap}/bin/nova-scheduler"
+    config-files:
+      - "{snap}/etc/nova/nova.conf"
+    config-files-override:
+      - "{snap_common}/etc/nova/nova.conf"
+    config-dirs:
+      - "{snap_common}/etc/nova/nova.conf.d"
+    log-file: "{snap_common}/log/nova-scheduler.log"
+  nova-consoleauth:
+    binary: "{snap}/bin/nova-consoleauth"
+    config-files:
+      - "{snap}/etc/nova/nova.conf"
+    config-files-override:
+      - "{snap_common}/etc/nova/nova.conf"
+    config-dirs:
+      - "{snap_common}/etc/nova/nova.conf.d"
+    log-file: "{snap_common}/log/nova-consoleauth.log"
+  nova-manage:
+    binary: "{snap}/bin/nova-manage"
+    config-files:
+      - "{snap}/etc/nova/nova.conf"
+    config-files-override:
+      - "{snap_common}/etc/nova/nova.conf"
+    config-dirs:
+      - "{snap_common}/etc/nova/nova.conf.d"
+  neutron-db-manage:
+    binary: "{snap}/bin/neutron-db-manage"
+    config-files:
+      - "{snap}/etc/neutron/neutron.conf"
+      - "{snap}/etc/neutron/plugins/ml2/ml2_conf.ini"
+    config-files-override:
+      - "{snap_common}/etc/neutron/neutron.conf"
+      - "{snap_common}/etc/neutron/plugins/ml2/ml2_conf.ini"
+    config-dirs:
+      - "{snap_common}/etc/neutron/neutron.conf.d"
+  neutron-server:
+    binary: "{snap}/bin/neutron-server"
+    config-files:
+      - "{snap}/etc/neutron/neutron.conf"
+      - "{snap}/etc/neutron/plugins/ml2/ml2_conf.ini"
+    config-files-override:
+      - "{snap_common}/etc/neutron/neutron.conf"
+      - "{snap_common}/etc/neutron/plugins/ml2/ml2_conf.ini"
+    config-dirs:
+      - "{snap_common}/etc/neutron/neutron.conf.d"
+    log-file: "{snap_common}/log/neutron-server.log"
+  glance-manage:
+    binary: "{snap}/bin/glance-manage"
+    config-files:
+      - "{snap}/etc/glance/glance-manage.conf"
+    config-files-override:
+      - "{snap_common}/etc/glance/glance-manage.conf"
+    config-dirs:
+      - "{snap_common}/etc/glance/glance.conf.d"
+  glance-registry:
+    binary: "{snap}/bin/glance-registry"
+    config-files:
+      - "{snap}/etc/glance/glance-registry.conf"
+    config-files-override:
+      - "{snap_common}/etc/glance/glance-registry.conf"
+    config-dirs:
+      - "{snap_common}/etc/glance/glance.conf.d"
+    log-file: "{snap_common}/log/glance-registry.log"
+  glance-api:
+    binary: "{snap}/bin/glance-api"
+    config-files:
+      - "{snap}/etc/glance/glance-api.conf"
+    config-files-override:
+      - "{snap_common}/etc/glance/glance-api.conf"
+    config-dirs:
+      - "{snap_common}/etc/glance/glance.conf.d"
+    log-file: "{snap_common}/log/glance-api.log"

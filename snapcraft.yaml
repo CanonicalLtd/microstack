@@ -1,0 +1,535 @@
+name: microstack
+version: alpha
+summary: Openstack on your laptop.
+description: |
+  Microstack gives you an easy way to develop and test Openstack
+  workloads on your laptop. TODO drop in basic usage instructions
+  here.
+grade: devel
+confinement: classic
+
+apps:
+  # Keystone
+  keystone-uwsgi:
+    command: snap-openstack keystone-uwsgi
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network-bind
+  keystone-manage:
+    command: snap-openstack keystone-manage
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network
+
+  # Nova
+  nova-uwsgi:
+    command: snap-openstack nova-uwsgi
+    daemon: simple
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+      OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
+    plugs:
+      - network-bind
+  nova-api:
+    command: snap-openstack nova-api-os-compute
+    daemon: simple
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network-bind
+  conductor:
+    command: snap-openstack nova-conductor
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network
+  scheduler:
+    command: snap-openstack nova-scheduler
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network
+  consoleauth:
+    command: snap-openstack nova-consoleauth
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network
+  nova-manage:
+    command: snap-openstack nova-manage
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network
+
+  # Neutron
+  neutron-api:
+    command: snap-openstack neutron-server
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network-bind
+  neutron-manage:
+    command: snap-openstack neutron-db-manage
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network
+
+  # Glance
+  glance-api:
+    command: snap-openstack glance-api
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network-bind
+  registry:
+    command: snap-openstack glance-registry
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+  glance-manage:
+    command: snap-openstack glance-manage
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network
+
+  # Openstack Shared Services
+  nginx:
+    command: snap-openstack nginx
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: forking
+    plugs:
+      - network-bind
+
+  # Openvswitch
+  ovs-vswitchd:
+    command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server --no-monitor --system-id=random start
+    stop-command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server stop
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: forking
+    plugs:
+      - network
+      - network-bind
+      - network-control
+      - openvswitch-support
+      - process-control
+      - system-trace
+  ovsdb-server:
+    command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovs-vswitchd --no-monitor --system-id=random start
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    stop-command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovs-vswitchd stop
+    daemon: forking
+    plugs:
+      - network
+      - network-bind
+      - network-control
+      - openvswitch-support
+      - process-control
+      - system-trace
+  ovs-vsctl:
+    command: ovs-wrapper $SNAP/bin/ovs-vsctl
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    plugs:
+      - network
+  ovs-appctl:
+    command: ovs-wrapper $SNAP/bin/ovs-appctl
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C    
+    plugs:
+      - network
+  ovs-ofctl:
+    command: ovs-wrapper $SNAP/bin/ovs-ofctl
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C    
+    plugs:
+      - network
+  ovs-dpctl:
+    command: ovs-wrapper $SNAP/bin/ovs-dpctl
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C    
+    plugs:
+      - network
+
+  # Libvirt/Qemu
+  libvirt-bin:
+    command: bin/launch-libvirtd
+    environment:
+      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+    daemon: simple
+  virsh:
+    command: bin/virsh
+    environment:
+      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+      LC_ALL: C
+
+parts:
+  # Keystone
+  keystone:
+    plugin: python
+    python-version: python2
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    source: http://tarballs.openstack.org/keystone/keystone-stable-ocata.tar.gz
+    python-packages:
+      - mysql-python
+      - oslo.cache[dogpile]
+      - pymysql
+      - pysqlite
+      - uwsgi
+      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+    install: |
+      touch $SNAPCRAFT_PART_INSTALL/lib/python2.7/site-packages/paste/__init__.py
+      touch $SNAPCRAFT_PART_INSTALL/lib/python2.7/site-packages/repoze/__init__.py
+      export SNAP_ROOT="../../.."
+      export SNAP_SITE_PACKAGES="$SNAPCRAFT_PART_INSTALL/lib/python2.7/site-packages"
+      patch -d $SNAP_SITE_PACKAGES -p1 < $SNAP_ROOT/patches/oslo-config-dirs.patch
+    build-packages:
+      - gcc
+      - libffi-dev
+      - libmysqlclient-dev
+      - libssl-dev
+      - libsqlite3-dev
+
+  keystone-config:
+    after: [keystone]
+    plugin: dump
+    source: http://tarballs.openstack.org/keystone/keystone-stable-ocata.tar.gz
+    organize:
+      etc/*.conf: etc/keystone/
+      etc/*.ini: etc/keystone/
+      etc/*.json: etc/keystone/
+      etc/*.templates: etc/keystone/
+    filesets:
+      etc:
+        - etc/keystone/*.conf
+        - etc/keystone/*.ini
+        - etc/keystone/*.json
+        - etc/keystone/*.templates
+    stage: [$etc]
+    prime: [$etc]
+
+  # Nova
+  nova:
+    after: [keystone]  # We abitrarily rely on keystone to be the one to patch things
+    plugin: python
+    python-version: python2
+    source: http://tarballs.openstack.org/nova/nova-stable-ocata.tar.gz
+    python-packages:
+      - pymysql
+      - uwsgi
+      - python-memcached
+      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    build-packages:
+      - gcc
+      - libffi-dev
+      - libssl-dev
+      - libxml2-dev
+      - libxslt1-dev
+
+  nova-config:
+    after: [nova]
+    plugin: dump
+    source: http://tarballs.openstack.org/nova/nova-stable-ocata.tar.gz
+    filesets:
+      etc:
+        - etc/nova/*.conf
+        - etc/nova/*.ini
+        - etc/nova/*.json
+        - etc/nova/rootwrap.d
+    stage: [$etc]
+    prime: [$etc]
+
+  neutron:
+    after: [keystone]  # We arbitrarily rely on keystone to patch some things
+    plugin: python
+    python-version: python2
+    source: http://tarballs.openstack.org/neutron/neutron-stable-ocata.tar.gz
+    python-packages:
+      - pymysql
+      - python-memcached
+      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    build-packages:
+      - gcc
+      - libffi-dev
+      - libssl-dev
+
+  neutron-config:
+    after: [neutron]
+    plugin: dump
+    source: http://tarballs.openstack.org/neutron/neutron-stable-ocata.tar.gz
+    organize:
+      etc/*.conf: etc/neutron/
+      etc/*.ini: etc/neutron/
+      etc/*.json: etc/neutron/
+      etc/rootwrap.d/*: etc/neutron/rootwrap.d/
+    filesets:
+      etc:
+        - etc/neutron/*
+    stage: [$etc]
+    prime: [$etc]
+
+  # Glance
+  glance:
+    after: [keystone]  # We arbitrarily rely on keystone to patch some things    
+    plugin: python
+    python-version: python2
+    source: http://tarballs.openstack.org/glance/glance-stable-ocata.tar.gz
+    python-packages:
+      - httplib2
+      - os-brick
+      - oslo.rootwrap
+      - oslo.vmware
+      - pymysql
+      - python-cinderclient
+      - python-memcached
+      - python-swiftclient
+      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    build-packages:
+      - gcc
+      - libffi-dev
+      - libssl-dev
+      - libxml2-dev
+      - libxslt1-dev
+  glance-config:
+    after: [glance]
+    plugin: dump
+    source: http://tarballs.openstack.org/glance/glance-stable-ocata.tar.gz
+    organize:
+      etc/*.conf: etc/glance/
+      etc/*.ini: etc/glance/
+      etc/*.json: etc/glance/
+    filesets:
+      etc:
+        - etc/glance/*.conf
+        - etc/glance/*.ini
+        - etc/glance/*.json
+    stage: [$etc]
+    prime: [$etc]
+
+  # Openvswitch
+  ovs-patches:
+    source: snap/patches/
+    plugin: dump
+    organize:
+      '*' : patches/
+    prime:
+      - -*
+
+  openvswitch:
+    # TODO: figure out a better way to fetch the version
+    source: http://openvswitch.org/releases/openvswitch-2.10.0.tar.gz
+    plugin: autotools
+    build-packages:
+      - libssl-dev
+      - libnuma-dev
+      - libcap-ng-dev
+      - libpcap-dev
+      - libunbound-dev
+      - python-all
+      - python-six
+      - python-setuptools
+    stage-packages:
+      - uuid-runtime
+    configflags:
+      - "--localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common"
+      - "--sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/etc"
+    after:
+      - ovs-patches
+    prepare: |
+      # Apply patches
+      for patch in ${SNAPCRAFT_STAGE}/patches/openvswitch/*.patch; do
+        echo "Applying $(basename "$patch") ..."
+        patch \
+          --batch \
+          --forward \
+          --strip 1 \
+          --input "$patch"
+        echo
+      done
+
+  # Openstack Shared Parts
+  templates:
+    after: [keystone, nova, neutron, openvswitch]
+    plugin: dump
+    source: snap
+
+  nginx:
+    after: [keystone, nova, neutron, openvswitch]
+    source: http://www.nginx.org/download/nginx-1.13.0.tar.gz
+    plugin: autotools
+    configflags:
+      - --prefix=/usr
+      - --http-log-path=/var/snap/microstack/common/log/nginx-access.log
+      - --error-log-path=/var/snap/microstack/common/log/nginx-error.log
+      - --lock-path=/var/snap/microstack/common/lock/nginx.lock
+      - --pid-path=/var/snap/microstack/common/run/nginx.pid
+      - --http-client-body-temp-path=/var/snap/microstack/common/lib/nginx_client_body
+      - --http-proxy-temp-path=/var/snap/microstack/common/lib/nginx_proxy
+      - --http-fastcgi-temp-path=/var/snap/microstack/common/lib/nginx_fastcgi
+      - --http-uwsgi-temp-path=/var/snap/microstack/common/lib/nginx_uwsgi
+      - --http-scgi-temp-path=/var/snap/microstack/common/lib/nginx_scgi
+      - --with-http_ssl_module
+    build-packages:
+      - libpcre3-dev
+      - libssl-dev
+      - python-six
+    prepare: |
+      export SNAP_ROOT="../../.."
+      export SNAP_SOURCE="$SNAP_ROOT/parts/nginx/build"
+      patch -d $SNAP_SOURCE -p1 < $SNAP_ROOT/patches/drop-nginx-setgroups.patch
+
+  libxml2:
+    source: http://xmlsoft.org/sources/libxml2-2.9.4.tar.gz
+    plugin: autotools
+
+  # libvirt/qemu
+  qemu:
+    plugin: nil
+    stage-packages:
+    - on amd64: [qemu-system-x86]
+    - on i386: [qemu-system-x86]
+    - on armhf: [qemu-system-arm]
+    - on arm64: [qemu-system-arm]
+    - qemu-utils
+    - libslang2
+    organize:
+      usr/lib/*/pulseaudio/libpulsecommon-8.0.so: usr/lib/libpulsecommon-8.0.so
+      usr/share/seabios/bios-256k.bin: qemu/bios-256k.bin
+      usr/share/seabios/vgabios-stdvga.bin: qemu/vgabios-stdvga.bin
+      usr/share/seabios/kvmvapic.bin: qemu/kvmvapic.bin
+      usr/lib/ipxe/qemu/efi-virtio.rom: qemu/efi-virtio.rom
+
+  kvm-support:
+    plugin: nil
+    stage-packages:
+    - try: [msr-tools]
+
+  libvirt:
+    source: .
+    source-subdir: libvirt-1.3.1
+    plugin: autotools
+    build-packages:
+    - libxml2-dev
+    - libxml-libxml-perl
+    - libcurl4-gnutls-dev
+    - libncurses5-dev
+    - libreadline-dev
+    - zlib1g-dev
+    - libgcrypt20-dev
+    - libgnutls28-dev
+    - libyajl-dev
+    - libpcap0.8-dev
+    - libaudit-dev
+    - libdevmapper-dev
+    - libpciaccess-dev
+    - libnl-3-dev
+    - libnl-route-3-dev
+    - uuid-dev
+    - try: [libnuma-dev]
+    - wget
+    - dpkg-dev
+    stage-packages:
+    - dmidecode
+    - dnsmasq
+    - libxml2
+    - libyajl2
+    - try: [libnuma1]
+    - libcurl3-gnutls
+    - libpciaccess0
+    configflags:
+    - --with-qemu
+    - --without-bhyve
+    - --without-xen
+    - --without-openvz
+    - --without-vmware
+    - --without-xenapi
+    - --without-esx
+    - --without-hyperv
+    - --without-lxc
+    - --without-vz
+    - --without-vbox
+    - --without-uml
+    - --without-sasl
+    - --without-storage-iscsi
+    - --without-storage-sheepdog
+    - --without-storage-rbd
+    - --without-storage-lvm
+    - --without-selinux
+    - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current
+    - --localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
+    - --sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
+    - DNSMASQ=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/sbin/dnsmasq
+    - DMIDECODE=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/sbin/dmidecode
+    override-build: |
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_1.3.1.orig.tar.gz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_1.3.1-1ubuntu10.24.debian.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_1.3.1-1ubuntu10.24.dsc
+      dpkg-source -x libvirt*.dsc
+      snapcraftctl build
+    organize:
+      # Hack to shift installed libvirt back to root of snap
+      # required to ensure that pathing to files etc works at
+      # runtime
+      # * is not used to avoid directory merge conflicts
+      snap/microstack/current/: ./
