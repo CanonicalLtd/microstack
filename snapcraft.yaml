@@ -7,24 +7,21 @@ description: |
   here.
 grade: devel
 confinement: classic
+environment:
+  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+  PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+  LC_ALL: C
+  OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/  
 
 apps:
   # Keystone
   keystone-uwsgi:
     command: snap-openstack keystone-uwsgi
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: simple
     plugs:
       - network-bind
   keystone-manage:
     command: snap-openstack keystone-manage
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     plugs:
       - network
 
@@ -32,113 +29,64 @@ apps:
   nova-uwsgi:
     command: snap-openstack nova-uwsgi
     daemon: simple
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
-      OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
     plugs:
       - network-bind
   nova-api:
     command: snap-openstack nova-api-os-compute
     daemon: simple
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     plugs:
       - network-bind
   conductor:
     command: snap-openstack nova-conductor
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: simple
     plugs:
       - network
   scheduler:
     command: snap-openstack nova-scheduler
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: simple
     plugs:
       - network
   consoleauth:
     command: snap-openstack nova-consoleauth
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: simple
     plugs:
       - network
   nova-manage:
     command: snap-openstack nova-manage
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     plugs:
       - network
 
   # Neutron
   neutron-api:
     command: snap-openstack neutron-server
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: simple
     plugs:
       - network-bind
   neutron-manage:
     command: snap-openstack neutron-db-manage
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     plugs:
       - network
 
   # Glance
   glance-api:
     command: snap-openstack glance-api
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: simple
     plugs:
       - network-bind
   registry:
     command: snap-openstack glance-registry
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: simple
     plugs:
       - network
       - network-bind
   glance-manage:
     command: snap-openstack glance-manage
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     plugs:
       - network
 
   # Openstack Shared Services
   nginx:
     command: snap-openstack nginx
-    environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: forking
     plugs:
       - network-bind
@@ -147,10 +95,6 @@ apps:
   ovs-vswitchd:
     command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server --no-monitor --system-id=random start
     stop-command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server stop
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: forking
     plugs:
       - network
@@ -161,10 +105,6 @@ apps:
       - system-trace
   ovsdb-server:
     command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovs-vswitchd --no-monitor --system-id=random start
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     stop-command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovs-vswitchd stop
     daemon: forking
     plugs:
@@ -176,50 +116,52 @@ apps:
       - system-trace
   ovs-vsctl:
     command: ovs-wrapper $SNAP/bin/ovs-vsctl
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     plugs:
       - network
   ovs-appctl:
     command: ovs-wrapper $SNAP/bin/ovs-appctl
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C    
     plugs:
       - network
   ovs-ofctl:
     command: ovs-wrapper $SNAP/bin/ovs-ofctl
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C    
     plugs:
       - network
   ovs-dpctl:
     command: ovs-wrapper $SNAP/bin/ovs-dpctl
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C    
     plugs:
       - network
 
   # Libvirt/Qemu
   libvirt-bin:
     command: bin/launch-libvirtd
-    environment:
-      LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
     daemon: simple
   virsh:
     command: bin/virsh
     environment:
       PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
       LC_ALL: C
+
+  # MySQL
+  mysql-startup:
+    command: mysql-startup
+    plugs:
+      - process-control
+      - network
+      - network-bind
+  mysql-server:
+    command: mysql-start-server
+    plugs:
+      - process-control
+      - network
+      - network-bind
+  mysql-client:
+    command: mysql-start-client
+    plugs:
+      - process-control
+      - network
+      - network-bind
+  mysql-help:
+    command: mysql-show-help
 
 parts:
   # Keystone
@@ -330,7 +272,7 @@ parts:
 
   # Glance
   glance:
-    after: [keystone]  # We arbitrarily rely on keystone to patch some things    
+    after: [keystone]  # We arbitrarily rely on keystone to patch some things
     plugin: python
     python-version: python2
     source: http://tarballs.openstack.org/glance/glance-stable-ocata.tar.gz
@@ -533,3 +475,48 @@ parts:
       # runtime
       # * is not used to avoid directory merge conflicts
       snap/microstack/current/: ./
+
+
+  # MySQL
+  mysql-server:
+    prepare: ./stage_binaries.sh
+    build-packages: [libaio-dev, libmecab-dev, libnuma-dev, libncurses5-dev, wget, zlib1g-dev]
+    plugin: dump
+    source: ./
+    organize:
+      staging-files/usr: usr/
+    snap:
+      - usr/lib/mysql/plugin/mysql_no_login.so
+      - usr/lib/mysql/plugin/innodb_engine.so
+      - usr/lib/mysql/plugin/mypluglib.so
+      - usr/lib/mysql/plugin/locking_service.so
+      - usr/lib/mysql/plugin/adt_null.so
+      - usr/lib/mysql/plugin/rewriter.so
+      - usr/lib/mysql/plugin/keyring_udf.so
+      - usr/lib/mysql/plugin/libmemcached.so
+      - usr/lib/mysql/plugin/auth_socket.so
+      - usr/lib/mysql/plugin/validate_password.so
+      - usr/lib/mysql/plugin/semisync_slave.so
+      - usr/lib/mysql/plugin/semisync_master.so
+      - usr/lib/mysql/plugin/keyring_file.so
+      - usr/lib/mysql/plugin/mysqlx.so
+      - usr/lib/mysql/plugin/version_token.so
+      - usr/lib/mysql/plugin/libpluginmecab.so
+      - usr/lib/mysql/plugin/group_replication.so
+      - usr/sbin/mysqld
+      - usr/bin/mysqlpump
+      - usr/bin/mysql
+      - usr/bin/mysql_ssl_rsa_setup
+      - usr/bin/my_print_defaults
+      - usr/bin/mysqldump
+      - usr/bin/mysql_tzinfo_to_sql
+      - usr/bin/mysql_upgrade
+      - usr/share/mysql/*
+  mysql-scripts:
+    plugin: dump
+    source: ./scripts
+    organize:
+      mysql-show-help: bin/mysql-show-help
+      mysql-start-server: bin/mysql-start-server
+      mysql-start-client: bin/mysql-start-client
+      mysql-startup: bin/mysql-startup
