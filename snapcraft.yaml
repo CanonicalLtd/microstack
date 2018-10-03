@@ -11,7 +11,7 @@ environment:
   LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
   PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
   LC_ALL: C
-  OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/  
+  OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
 
 apps:
   # Keystone
@@ -162,6 +162,27 @@ apps:
       - network-bind
   mysql-help:
     command: mysql-show-help
+
+  # RabbitMQ
+  rabbitmq-server:
+    command: lib/erlang/lib/rabbitmq_server/sbin/rabbitmq-server
+    daemon: simple
+    plugs:
+      - network-bind
+  rabbitmqctl:
+    command: lib/erlang/lib/rabbitmq_server/sbin/rabbitmqctl
+    plugs:
+      - network
+  rabbitmq-plugins:
+    command: lib/erlang/lib/rabbitmq_server/sbin/rabbitmq-plugins
+  rabbitmq-defaults:
+    command: lib/erlang/lib/rabbitmq_server/sbin/rabbitmq-defaults
+  rabbitmq-env:
+    command: lib/erlang/lib/rabbitmq_server/sbin/rabbitmq-env
+  erl:
+    command: bin/erl
+  escript:
+    command: bin/escript
 
 parts:
   # Keystone
@@ -520,3 +541,52 @@ parts:
       mysql-start-server: bin/mysql-start-server
       mysql-start-client: bin/mysql-start-client
       mysql-startup: bin/mysql-startup
+
+  # RabbitMQ
+  erlang:
+    source: http://www.erlang.org/download/otp_src_21.1.tar.gz
+    plugin: make
+    build-packages:
+      - gcc
+      - make
+      - libncurses5-dev
+      - libssl-dev
+    override-build: |
+      export ERL_TOP=$SNAPCRAFT_PART_BUILD
+      ./configure --with-ssl --prefix=$SNAPCRAFT_PART_INSTALL
+      make
+      make install
+
+  elixir:
+    after: [erlang]
+    source: https://github.com/elixir-lang/elixir/archive/v1.7.3.tar.gz
+    plugin: make
+    override-build: |
+      export PREFIX=$SNAPCRAFT_PART_INSTALL
+      make
+      make install
+
+  rabbitmq-server-release:
+    after: [elixir]
+    source: https://github.com/rabbitmq/rabbitmq-server-release.git
+    plugin: make
+    override-build: |
+      make source-dist
+      cp PACKAGES/rabbitmq*.tar.xz $SNAPCRAFT_PART_INSTALL/rabbitmq-server.tar.xz
+  rabbitmq:
+    after: [rabbitmq-server-release]
+    source: ./parts/rabbitmq-server-release/install/rabbitmq-server.tar.xz
+    plugin: make
+    build-packages:
+      - python2.7
+      - libxslt1-dev
+      - xmlto
+      - zip
+      - unzip
+    override-build: |
+      export PREFIX=$SNAPCRAFT_PART_INSTALL
+      export RMQ_ROOTDIR=$PREFIX/lib/erlang
+      export RMQ_LIBDIR=$RMQ_ROOTDIR/lib
+      export RMQ_ERLAPP_DIR=$RMQ_LIBDIR/rabbitmq_server
+      make
+      make install
