@@ -184,6 +184,13 @@ apps:
   escript:
     command: bin/escript
 
+  # Memcached
+  memcached:
+    command: bin/memcached
+    daemon: simple
+    plugs:
+      - network-bind
+
 parts:
   # Keystone
   keystone:
@@ -583,4 +590,18 @@ parts:
       export RMQ_LIBDIR=$RMQ_ROOTDIR/lib
       export RMQ_ERLAPP_DIR=$RMQ_LIBDIR/rabbitmq_server
       make
+      make install
+
+  # Memcached
+  memcached:
+    plugin: autotools
+    source: https://memcached.org/files/memcached-1.5.10.tar.gz
+    build-packages:
+      - libevent-dev
+      - gcc
+      - make
+    override-build: |
+      ./configure --prefix=$SNAPCRAFT_PART_INSTALL
+      make
+      make test
       make install
