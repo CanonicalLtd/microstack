@@ -189,8 +189,8 @@ parts:
   keystone:
     plugin: python
     python-version: python2
-    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
-    source: http://tarballs.openstack.org/keystone/keystone-stable-ocata.tar.gz
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
+    source: http://tarballs.openstack.org/keystone/keystone-stable-rocky.tar.gz
     python-packages:
       - mysql-python
       - oslo.cache[dogpile]
@@ -198,12 +198,6 @@ parts:
       - pysqlite
       - uwsgi
       - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
-    install: |
-      touch $SNAPCRAFT_PART_INSTALL/lib/python2.7/site-packages/paste/__init__.py
-      touch $SNAPCRAFT_PART_INSTALL/lib/python2.7/site-packages/repoze/__init__.py
-      export SNAP_ROOT="../../.."
-      export SNAP_SITE_PACKAGES="$SNAPCRAFT_PART_INSTALL/lib/python2.7/site-packages"
-      patch -d $SNAP_SITE_PACKAGES -p1 < $SNAP_ROOT/patches/oslo-config-dirs.patch
     build-packages:
       - gcc
       - libffi-dev
@@ -214,7 +208,7 @@ parts:
   keystone-config:
     after: [keystone]
     plugin: dump
-    source: http://tarballs.openstack.org/keystone/keystone-stable-ocata.tar.gz
+    source: http://tarballs.openstack.org/keystone/keystone-stable-rocky.tar.gz
     organize:
       etc/*.conf: etc/keystone/
       etc/*.ini: etc/keystone/
@@ -234,13 +228,13 @@ parts:
     after: [keystone]  # We abitrarily rely on keystone to be the one to patch things
     plugin: python
     python-version: python2
-    source: http://tarballs.openstack.org/nova/nova-stable-ocata.tar.gz
+    source: http://tarballs.openstack.org/nova/nova-stable-rocky.tar.gz
     python-packages:
       - pymysql
       - uwsgi
       - python-memcached
       - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
-    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
     build-packages:
       - gcc
       - libffi-dev
@@ -251,7 +245,7 @@ parts:
   nova-config:
     after: [nova]
     plugin: dump
-    source: http://tarballs.openstack.org/nova/nova-stable-ocata.tar.gz
+    source: http://tarballs.openstack.org/nova/nova-stable-rocky.tar.gz
     filesets:
       etc:
         - etc/nova/*.conf
@@ -265,12 +259,12 @@ parts:
     after: [keystone]  # We arbitrarily rely on keystone to patch some things
     plugin: python
     python-version: python2
-    source: http://tarballs.openstack.org/neutron/neutron-stable-ocata.tar.gz
+    source: http://tarballs.openstack.org/neutron/neutron-stable-rocky.tar.gz
     python-packages:
       - pymysql
       - python-memcached
       - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
-    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
     build-packages:
       - gcc
       - libffi-dev
@@ -279,7 +273,7 @@ parts:
   neutron-config:
     after: [neutron]
     plugin: dump
-    source: http://tarballs.openstack.org/neutron/neutron-stable-ocata.tar.gz
+    source: http://tarballs.openstack.org/neutron/neutron-stable-rocky.tar.gz
     organize:
       etc/*.conf: etc/neutron/
       etc/*.ini: etc/neutron/
@@ -296,7 +290,7 @@ parts:
     after: [keystone]  # We arbitrarily rely on keystone to patch some things
     plugin: python
     python-version: python2
-    source: http://tarballs.openstack.org/glance/glance-stable-ocata.tar.gz
+    source: http://tarballs.openstack.org/glance/glance-stable-rocky.tar.gz
     python-packages:
       - httplib2
       - os-brick
@@ -307,7 +301,7 @@ parts:
       - python-memcached
       - python-swiftclient
       - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
-    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/ocata/upper-constraints.txt
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
     build-packages:
       - gcc
       - libffi-dev
@@ -317,7 +311,7 @@ parts:
   glance-config:
     after: [glance]
     plugin: dump
-    source: http://tarballs.openstack.org/glance/glance-stable-ocata.tar.gz
+    source: http://tarballs.openstack.org/glance/glance-stable-rocky.tar.gz
     organize:
       etc/*.conf: etc/glance/
       etc/*.ini: etc/glance/
