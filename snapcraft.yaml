@@ -8,7 +8,7 @@ description: |
 grade: devel
 confinement: classic
 environment:
-  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu
   PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
   LC_ALL: C
   OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
@@ -371,6 +371,12 @@ parts:
           --input "$patch"
         echo
       done
+
+  ovs-wrapper:
+    source: conf
+    plugin: dump
+    after:
+      - openvswitch
 
   # Openstack Shared Parts
   templates:
