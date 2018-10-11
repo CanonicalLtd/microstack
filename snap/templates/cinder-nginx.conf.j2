@@ -1,0 +1,10 @@
+server {
+    listen 8776;
+    access_log {{ snap_common }}/log/nginx-access.log;
+    error_log {{ snap_common }}/log/nginx-error.log;
+    location / {
+        include {{ snap }}/usr/conf/uwsgi_params;
+        uwsgi_param SCRIPT_NAME '';
+        uwsgi_pass unix://{{ snap_common }}/run/cinder-api.sock;
+    }
+}
