@@ -191,6 +191,32 @@ apps:
     plugs:
       - network-bind
 
+  # Cinder
+  cinder-uwsgi:
+    command: snap-openstack cinder-uwsgi
+    daemon: simple
+    plugs:
+      - network-bind
+  cinder-backup:
+    command: snap-openstack cinder-backup
+    daemon: simple
+    plugs:
+      - network
+  cinder-manage:
+    command: snap-openstack cinder-manage
+    plugs:
+      - network
+  cinder-scheduler:
+    command: snap-openstack cinder-scheduler
+    daemon: simple
+    plugs:
+      - network
+  cinder-volume:
+    command: snap-openstack cinder-volume
+    daemon: simple
+    plugs:
+      - network
+
 parts:
   # Keystone
   keystone:
@@ -380,7 +406,7 @@ parts:
 
   # Openstack Shared Parts
   templates:
-    after: [keystone, nova, neutron, openvswitch]
+    after: [keystone, nova, neutron, openvswitch, cinder]
     plugin: dump
     source: snap
 
@@ -609,5 +635,49 @@ parts:
     override-build: |
       ./configure --prefix=$SNAPCRAFT_PART_INSTALL
       make
-      make test
       make install
+
+  # Cinder
+  lvm2:
+    source: http://www.sourceware.org/pub/lvm2/releases/LVM2.2.02.172.tgz
+    plugin: autotools
+    configflags:
+      - --with-confdir=/var/snap/common/etc/
+      - --with-default-system-dir=/var/snap/common/etc/
+    build-attributes: [no-patchelf]
+  cinder:
+    after: [keystone]
+    plugin: python
+    python-version: python2
+    source: http://tarballs.openstack.org/cinder/cinder-stable-rocky.tar.gz
+    python-packages:
+      - python-memcached
+      - pymysql
+      - uwsgi
+      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
+    build-packages:
+      - gcc
+      - libffi-dev
+      - libssl-dev
+      - libxml2-dev
+      - libxslt1-dev
+  cinder-config:
+    after: [cinder]
+    plugin: dump
+    source: http://tarballs.openstack.org/cinder/cinder-stable-rocky.tar.gz
+    organize:
+      etc/*.conf: etc/cinder/
+      etc/*.ini: etc/cinder/
+      etc/*.json: etc/cinder/
+      etc/*.templates: etc/cinder/
+    filesets:
+      etc:
+        - etc/cinder/*.conf
+        - etc/cinder/*.ini
+        - etc/cinder/*.json
+        - etc/cinder/*.templates
+    stage: [$etc]
+    prime: [$etc]
+      
+
