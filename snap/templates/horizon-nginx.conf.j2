@@ -1,0 +1,13 @@
+# If the OpenStack service has an API that runs behind uwsgi+nginx, you'll need
+# to define this template. Be sure to update "listen" with the port number and
+# also update "api-name" for the socket.
+server {
+    listen 1234;
+    access_log {{ snap_common }}/log/nginx-access.log;
+    error_log {{ snap_common }}/log/nginx-error.log;
+    location / {
+        include {{ snap }}/usr/conf/uwsgi_params;
+        uwsgi_param SCRIPT_NAME '';
+        uwsgi_pass unix://{{ snap_common }}/run/api-name.sock;
+    }
+}

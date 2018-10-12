@@ -1,0 +1,16 @@
+# If the OpenStack service has an API that runs behind uwsgi+nginx, you'll need
+# to define this template. Be sure to update the path for the wsgi-file and
+# "api-name" for the socket. You may also want to rename this file according to
+# the service it provides, and you may even need to provide multiple uwsgi files
+# if there is more than one wsgi application.
+[uwsgi]
+wsgi-file = {{ snap }}/bin/horizon-wsgi-file-name
+uwsgi-socket = {{ snap_common }}/run/api-name.sock
+buffer-size = 65535
+master = true
+enable-threads = true
+processes = 4
+thunder-lock = true
+lazy-apps = true
+home = {{ snap }}/usr
+pyargv = {{ pyargv }}

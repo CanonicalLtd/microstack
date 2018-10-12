@@ -217,6 +217,13 @@ apps:
     plugs:
       - network
 
+  # Horizon
+  uwsgi:
+    command: snap-openstack horizon-uwsgi
+    daemon: simple
+    plugs:
+      - network-bind
+
 parts:
   # Keystone
   keystone:
@@ -406,7 +413,7 @@ parts:
 
   # Openstack Shared Parts
   templates:
-    after: [keystone, nova, neutron, openvswitch, cinder]
+    after: [keystone, nova, neutron, openvswitch, cinder, horizon]
     plugin: dump
     source: snap
 
@@ -680,4 +687,32 @@ parts:
     stage: [$etc]
     prime: [$etc]
       
-
+  # Horizon
+  horizon:
+    after: [keystone]
+    plugin: python
+    python-version: python2
+    source: http://tarballs.openstack.org/horizon/horizon-stable-rocky.tar.gz
+    python-packages:
+      - uwsgi
+      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
+    build-packages:
+      - gcc
+      - libffi-dev
+      - libssl-dev
+      - libxml2-dev
+      - libxslt1-dev
+  horizon-config:
+    after: [horizon]
+    plugin: dump
+    source: http://tarballs.openstack.org/horizon/horizon-stable-rocky.tar.gz
+    organize:
+      etc/*.conf: etc/horizon/
+    filesets:
+      etc:
+        - etc/horizon/*.conf
+    stage: [$etc]
+    prime: [$etc]
+      
+  
