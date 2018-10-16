@@ -3,3 +3,9 @@ set -e
 
 install -D $SNAP/var/snap/microstack/common/libvirt/libvirtd.conf $SNAP_COMMON/libvirt/libvirtd.conf
 sed -i 's/unix_sock_group = "libvirtd"/unix_sock_group = "sudo"/' $SNAP_COMMON/libvirt/libvirtd.conf
+
+# Configure keystone
+sudo microstack.keystone-manage fernet_setup --keystone-user root --keystone-group root 
+sudo microstack.keystone-manage db_sync
+sudo microstack.keystone-manage bootstrap --bootstrap-password keystone --bootstrap-admin-url http://localhost:35357/v3/ --bootstrap-internal-url http://localhost:35357/v3/ --bootstrap-public-url http://localhost:5000/v3/ --bootstrap-region-id RegionOne
+
