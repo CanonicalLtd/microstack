@@ -591,6 +591,7 @@ parts:
       - make
       - libncurses5-dev
       - libssl-dev
+      - curl
     override-build: |
       export ERL_TOP=$SNAPCRAFT_PART_BUILD
       ./configure --with-ssl --prefix=$SNAPCRAFT_PART_INSTALL
