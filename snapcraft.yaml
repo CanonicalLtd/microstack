@@ -28,6 +28,11 @@ apps:
     command: openstack
     plugs:
       - network
+  configure-the-things:
+    command: bin/configure-the-things.sh
+    plugs:
+      - network
+      - process-control
 
   # Keystone
   keystone-uwsgi:
@@ -251,6 +256,10 @@ parts:
       - libssl-dev
       - libsqlite3-dev
 
+  configure-the-things:
+    plugin: dump
+    source: src/experiments
+
   keystone-config:
     after: [keystone]
     plugin: dump
@@ -260,6 +269,7 @@ parts:
       etc/*.ini: etc/keystone/
       etc/*.json: etc/keystone/
       etc/*.templates: etc/keystone/
+      
     filesets:
       etc:
         - etc/keystone/*.conf

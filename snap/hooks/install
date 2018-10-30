@@ -4,7 +4,7 @@ set -e
 install -D $SNAP/var/snap/microstack/common/libvirt/libvirtd.conf $SNAP_COMMON/libvirt/libvirtd.conf
 sed -i 's/unix_sock_group = "libvirtd"/unix_sock_group = "sudo"/' $SNAP_COMMON/libvirt/libvirtd.conf
 
-# Mysql startup script
+# Mysql setup script
 set -e
 init_config() {
   mkdir "${CONFDIR}"
@@ -62,5 +62,3 @@ then
   chmod 755 "${RUNDIR}"
   VARS="--user=mysql"
 fi
-echo "user=root" >> ${CONFFILE}
-echo "password=`sudo cat /var/snap/microstack/common/log/error.log | grep "temporary password" | cut -d " " -f11`" >> ${CONFFILE}
