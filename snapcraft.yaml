@@ -36,17 +36,17 @@ apps:
     daemon: simple
     plugs:
       - network-bind
-  conductor:
+  nova-conductor:
     command: snap-openstack nova-conductor
     daemon: simple
     plugs:
       - network
-  scheduler:
+  nova-scheduler:
     command: snap-openstack nova-scheduler
     daemon: simple
     plugs:
       - network
-  consoleauth:
+  nova-consoleauth:
     command: snap-openstack nova-consoleauth
     daemon: simple
     plugs:
