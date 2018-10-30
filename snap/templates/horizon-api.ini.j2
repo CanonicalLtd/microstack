@@ -4,8 +4,8 @@
 # the service it provides, and you may even need to provide multiple uwsgi files
 # if there is more than one wsgi application.
 [uwsgi]
-wsgi-file = {{ snap }}/bin/horizon-wsgi-file-name
-uwsgi-socket = {{ snap_common }}/run/api-name.sock
+wsgi-file = {{ snap }}/bin/horizon-wsgi
+uwsgi-socket = {{ snap_common }}/run/horizon.sock
 buffer-size = 65535
 master = true
 enable-threads = true

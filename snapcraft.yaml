@@ -229,11 +229,11 @@ apps:
       - network
 
   # Horizon
-  uwsgi:
-    command: snap-openstack horizon-uwsgi
-    daemon: simple
-    plugs:
-      - network-bind
+#  horizon-uwsgi:
+#    command: snap-openstack horizon-uwsgi
+#    daemon: simple
+#    plugs:
+#      - network-bind
 
 parts:
   # Keystone
