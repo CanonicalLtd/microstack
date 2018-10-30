@@ -12,8 +12,23 @@ environment:
   PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
   LC_ALL: C
   OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
+  # admin rc (TODO: put this someplace more sensible)
+  OS_PROJECT_DOMAIN_NAME: default
+  OS_USER_DOMAIN_NAME: default
+  OS_PROJECT_NAME: admin
+  OS_USERNAME: admin
+  OS_PASSWORD: keystone
+  OS_AUTH_URL: http://localhost:35357
+  OS_IDENTITY_API_VERSION: 3
+  OS_IMAGE_API_VERSION: 2
 
 apps:
+  # Openstack
+  openstack:
+    command: openstack
+    plugs:
+      - network
+
   # Keystone
   keystone-uwsgi:
     command: snap-openstack keystone-uwsgi
@@ -612,7 +627,7 @@ parts:
         - etc/cinder/*.templates
     stage: [$etc]
     prime: [$etc]
-      
+
   # Horizon
   horizon:
     after: [keystone]
@@ -640,5 +655,12 @@ parts:
         - etc/horizon/*.conf
     stage: [$etc]
     prime: [$etc]
-      
-  
+
+  # Openstackclient
+  python-openstackclient:
+    after: [keystone]
+    plugin: python
+    python-version: python2
+    python-packages:
+      - python-openstackclient==3.15.0
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt

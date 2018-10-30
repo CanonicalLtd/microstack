@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+# Openstack Prep
+# which openstack || echo "This snap currently requires the python openstack client to be installed and in your path. The intent is to add the client in before development is complete."; exit 1
+
+# QEMU Setup
+echo "qemu setup"
 driver="$(snapctl get driver)"
 
 if [[ -n $driver && ! $driver =~ (LIBVIRT|QEMU) ]]; then
@@ -15,3 +20,45 @@ if [[ $driver != $driver_saved ]]; then
     echo "$driver" > $SNAP_COMMON/driver
     snapctl restart $SNAP_NAME
 fi
+
+# Openstack client alias
+#snap aliases microstack | grep openstack || sudo snap alias microstack.openstack openstack
+
+exit 0
+
+# Keystone Setup
+echo "keystone setup"
+
+sudo microstack.mysql-client -u root << EOF
+CREATE DATABASE IF NOT EXISTS keystone;
+GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' \
+  IDENTIFIED BY 'keystone';
+EOF
+
+# while sudo [ ! -d /var/snap/keystone/common/etc/keystone/ ]; do sleep 0.1; done;
+# sudo cp -r $SNAP/etc/snap-keystone/* /var/snap/microstack/common/etc/
+
+# Manually define alias if snap isn't installed from snap store.
+# Otherwise, snap store defines this alias automatically.
+##snap aliases microstack | grep keystone-manage || sudo snap alias microstack.keystone-manage keystone-manage
+
+echo "fernet tokens"
+sudo microstack.keystone-manage fernet_setup --keystone-user root --keystone-group root
+sudo microstack.keystone-manage db_sync
+
+# sudo systemctl restart snap.microstack.*
+
+microstack.openstack user show admin || {
+    sudo microstack.keystone-manage bootstrap \
+        --bootstrap-password $OS_PASSWORD \
+        --bootstrap-admin-url http://localhost:35357/v3/ \
+        --bootstrap-internal-url http://localhost:35357/v3/ \
+        --bootstrap-public-url http://localhost:5000/v3/ \
+        --bootstrap-region-id RegionOne
+}
+
+microstack.openstack project show service || {
+    microstack.openstack project create --domain default --description "Service Project" service
+}
+
+
