@@ -269,7 +269,7 @@ parts:
       etc/*.ini: etc/keystone/
       etc/*.json: etc/keystone/
       etc/*.templates: etc/keystone/
-      
+
     filesets:
       etc:
         - etc/keystone/*.conf
@@ -565,7 +565,7 @@ parts:
       mysql-start-server: bin/mysql-start-server
       mysql-start-client: bin/mysql-start-client
 
-  # RabbitMQa
+  # RabbitMQ
   rabbitmq-server:
     source: ./scripts/rabbitmq
     plugin: dump
