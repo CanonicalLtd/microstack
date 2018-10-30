@@ -186,7 +186,7 @@ apps:
 
   # Memcached
   memcached:
-    command: bin/memcached
+    command: memcached -u root -v
     daemon: simple
     plugs:
       - network-bind
