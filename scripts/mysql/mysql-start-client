@@ -14,15 +14,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-USERID=$(id -u)
-if [ "${USERID}" = "0" ];
+if [ -f "${SNAP_USER_COMMON}/etc/mysql/my.cnf" ];
 then
-  MYSQL_SNAPDIR=${SNAP_COMMON}
-  VARS="--user=mysql"
+  MYSQL_CONFFILE="${SNAP_USER_COMMON}/etc/mysql/my.cnf"
+elif [ -f "${SNAP_COMMON}/etc/mysql/my.cnf" ];
+then
+  MYSQL_CONFFILE="${SNAP_COMMON}/etc/mysql/my.cnf"
 else
-  MYSQL_SNAPDIR=${SNAP_USER_COMMON}
-  VARS=""
+  echo "WARNING: Can't find conf file. Did you run mysql-startup?"
 fi
 
-echo "Starting server..."
-mysqld --defaults-file="${MYSQL_SNAPDIR}/conf/my.cnf" ${VARS} $@
+if [ -f ${MYSQL_CONFFILE} ];
+then
+  echo "Using conf file: ${MYSQL_CONFFILE}"
+  MYSQL_CONFPARAM="--defaults-file=${MYSQL_CONFFILE}"
+fi
+mysql "${MYSQL_CONFPARAM}" $@

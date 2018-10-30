@@ -1,0 +1,72 @@
+#!/bin/bash
+# Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+set -e
+
+init_config() {
+  mkdir -p "${CONFDIR}"
+  echo "Generating config file in ${CONFFILE}..."
+  cat > ${CONFFILE} <<EOF
+[mysqld]
+pid-file=${RUNDIR}/mysqld.pid
+socket=${RUNDIR}/mysqld.sock
+datadir=${DATADIR}
+log-error=${LOGDIR}/error.log
+secure-file-priv=${FILESDIR}
+basedir=${BASEDIR}
+
+[mysql]
+socket=${RUNDIR}/mysqld.sock
+
+[mysql_upgrade]
+socket=${RUNDIR}/mysqld.sock
+EOF
+}
+
+init_database() {
+  echo "Initializing new database in ${DATADIR}..."
+  mkdir -p ${DATADIR}
+  mysqld --defaults-file=${CONFFILE} --initialize-insecure --user=root
+  echo "Done"
+}
+
+USERID=$(id -u)
+if [ "${USERID}" = "0" ];then
+  MYSQL_SNAPDIR="${SNAP_COMMON}"
+else
+  MYSQL_SNAPDIR="${SNAP_USER_COMMON}"
+fi
+
+DATADIR="${MYSQL_SNAPDIR}/lib/mysql"
+RUNDIR="${MYSQL_SNAPDIR}/run/mysql"
+LOGDIR="${MYSQL_SNAPDIR}/log/mysql"
+CONFDIR="${MYSQL_SNAPDIR}/etc/mysql"
+CONFFILE="${CONFDIR}/my.cnf"
+FILESDIR="${MYSQL_SNAPDIR}/lib/mysql-files"
+BASEDIR="${SNAP}/usr"
+
+[ -d "${LOGDIR}" ] || mkdir -p ${LOGDIR}
+[ -f "${LOGDIR}/error.log" ] || touch ${LOGDIR}/error.log
+[ -d "${FILESDIR}" ] || {
+    mkdir -p ${FILESDIR}
+    chmod 0700 ${FILESDIR}
+}
+[ -d "${RUNDIR}" ] || mkdir -p ${RUNDIR}
+[ -d "${CONFDIR}" ] || init_config
+[ -d "${DATADIR}" ] || init_database
+
+echo "Starting server..."
+exec mysqld --defaults-file=${CONFFILE} --user=root $@

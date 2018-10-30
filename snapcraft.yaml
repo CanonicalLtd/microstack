@@ -142,26 +142,19 @@ apps:
       LC_ALL: C
 
   # MySQL
-  mysql-startup:
-    command: mysql-startup
-    plugs:
-      - process-control
-      - network
-      - network-bind
-  mysql-server:
+  # MySQL
+  mysqld:
     command: mysql-start-server
+    daemon: simple
     plugs:
       - process-control
       - network
       - network-bind
-  mysql-client:
+  mysql:
     command: mysql-start-client
     plugs:
       - process-control
       - network
-      - network-bind
-  mysql-help:
-    command: mysql-show-help
 
   # RabbitMQ
   rabbitmq-server:
@@ -541,15 +534,13 @@ parts:
   # MySQL
   mysql-server:
     plugin: dump
-    source: ./scripts
+    source: ./scripts/mysql
     stage-packages:
       - mysql-server
       - mysql-client
     organize:
-      mysql-show-help: bin/mysql-show-help
       mysql-start-server: bin/mysql-start-server
       mysql-start-client: bin/mysql-start-client
-      mysql-startup: bin/mysql-startup
 
   # RabbitMQ
   erlang:
