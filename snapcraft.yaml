@@ -375,7 +375,7 @@ parts:
 
   openvswitch:
     # TODO: figure out a better way to fetch the version
-    source: http://openvswitch.org/releases/openvswitch-2.10.0.tar.gz
+    source: http://openvswitch.org/releases/openvswitch-2.10.1.tar.gz
     plugin: autotools
     build-packages:
       - libssl-dev
