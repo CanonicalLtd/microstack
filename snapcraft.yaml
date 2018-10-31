@@ -12,8 +12,28 @@ environment:
   PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
   LC_ALL: C
   OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
+  # admin rc (TODO: put this someplace more sensible)
+  OS_PROJECT_DOMAIN_NAME: default
+  OS_USER_DOMAIN_NAME: default
+  OS_PROJECT_NAME: admin
+  OS_USERNAME: admin
+  OS_PASSWORD: keystone
+  OS_AUTH_URL: http://localhost:5000
+  OS_IDENTITY_API_VERSION: 3
+  OS_IMAGE_API_VERSION: 2
 
 apps:
+  # Openstack
+  openstack:
+    command: openstack
+    plugs:
+      - network
+  configure-the-things:
+    command: bin/configure-the-things.sh
+    plugs:
+      - network
+      - process-control
+
   # Keystone
   keystone-uwsgi:
     command: snap-openstack keystone-uwsgi
@@ -46,11 +66,22 @@ apps:
     daemon: simple
     plugs:
       - network
-  nova-consoleauth:
-    command: snap-openstack nova-consoleauth
+  nova-compute:
+    command: snap-openstack nova-compute
     daemon: simple
     plugs:
-      - network
+      - network-bind
+      - network-control
+      - firewall-control
+      - hardware-observe
+      - libvirt
+      - openvswitch
+  nova-api-metadata:
+    command: snap-openstack nova-api-metadata
+    daemon: simple
+    plugs:
+      - network-bind
+      - firewall-control
   nova-manage:
     command: snap-openstack nova-manage
     plugs:
@@ -62,7 +93,58 @@ apps:
     daemon: simple
     plugs:
       - network-bind
-  neutron-manage:
+  neutron-openvswitch-agent:
+    command: snap-openstack neutron-openvswitch-agent
+    daemon: simple
+    plugs:
+      - network-bind
+      - network-control
+      - network-observe
+      - firewall-control
+      - process-control
+      - system-observe
+      - openvswitch
+  neutron-l3-agent:
+    command: snap-openstack neutron-l3-agent
+    daemon: simple
+    plugs:
+      - network-bind
+      - network-control
+      - network-observe
+      - firewall-control
+      - process-control
+      - system-observe
+      - openvswitch
+  neutron-dhcp-agent:
+    command: snap-openstack neutron-dhcp-agent
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+      - network-control
+      - network-observe
+      - process-control
+      - system-observe
+      - openvswitch
+  neutron-metadata-agent:
+    command: snap-openstack neutron-metadata-agent
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+      - network-control
+  neutron-ovs-cleanup:
+    command: snap-openstack neutron-ovs-cleanup
+    plugs:
+      - network
+      - network-control
+      - openvswitch
+  neutron-netns-cleanup:
+    command: snap-openstack neutron-netns-cleanup
+    plugs:
+      - network
+      - network-control
+  neutron-db-manage:
     command: snap-openstack neutron-db-manage
     plugs:
       - network
@@ -209,7 +291,7 @@ apps:
       - network
 
   # Horizon
-  uwsgi:
+  horizon-uwsgi:
     command: snap-openstack horizon-uwsgi
     daemon: simple
     plugs:
@@ -236,6 +318,10 @@ parts:
       - libssl-dev
       - libsqlite3-dev
 
+  configure-the-things:
+    plugin: dump
+    source: src/experiments
+
   keystone-config:
     after: [keystone]
     plugin: dump
@@ -245,6 +331,7 @@ parts:
       etc/*.ini: etc/keystone/
       etc/*.json: etc/keystone/
       etc/*.templates: etc/keystone/
+
     filesets:
       etc:
         - etc/keystone/*.conf
@@ -261,6 +348,7 @@ parts:
     python-version: python2
     source: http://tarballs.openstack.org/nova/nova-stable-rocky.tar.gz
     python-packages:
+      - libvirt-python
       - pymysql
       - uwsgi
       - python-memcached
@@ -272,6 +360,11 @@ parts:
       - libssl-dev
       - libxml2-dev
       - libxslt1-dev
+      - libvirt-dev
+    stage-packages:
+      - conntrack
+      - coreutils
+      - qemu-utils
 
   nova-config:
     after: [nova]
@@ -357,7 +450,7 @@ parts:
 
   # Openvswitch
   ovs-patches:
-    source: snap/patches/
+    source: patches/
     plugin: dump
     organize:
       '*' : patches/
@@ -554,7 +647,7 @@ parts:
       mysql-start-server: bin/mysql-start-server
       mysql-start-client: bin/mysql-start-client
 
-  # RabbitMQa
+  # RabbitMQ
   rabbitmq-server:
     source: ./scripts/rabbitmq
     plugin: dump

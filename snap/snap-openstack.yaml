@@ -10,11 +10,14 @@ setup:
     - "{snap_common}/etc/nginx/sites-enabled"
     - "{snap_common}/etc/nginx/snap/sites-enabled"
     - "{snap_common}/etc/glance/glance.conf.d"
-    - "{snap_common}/etc/horizon/horizon.conf.d"    
-    - "{snap_common}/etc/uwsgi/snap"
+    - "{snap_common}/etc/horizon/horizon.conf.d"
+    - "{snap_common}/etc/keystone/uwsgi/snap"
+    - "{snap_common}/etc/cinder/uwsgi/snap"
+    - "{snap_common}/etc/nova/uwsgi/snap"
+    - "{snap_common}/etc/horizon/uwsgi/snap"
     - "{snap_common}/fernet-keys"
     - "{snap_common}/lib"
-    - "{snap_common}/lib/images"    
+    - "{snap_common}/lib/images"
     - "{snap_common}/lock"
     - "{snap_common}/log"
     - "{snap_common}/run"
@@ -31,6 +34,8 @@ setup:
 # TODO add local_settings.py
     horizon-snap.conf.j2: "{snap_common}/etc/horizon/horizon.conf.d/horizon-snap.conf"
     horizon-nginx.conf.j2: "{snap_common}/etc/nginx/snap/sites-enabled/horizon.conf"
+  chmod:
+    "{snap_common}/instances": 0755
 entry_points:
   keystone-manage:
     binary: "{snap}/bin/keystone-manage"
@@ -42,9 +47,9 @@ entry_points:
       - "{snap_common}/etc/keystone/keystone.conf.d"
   keystone-uwsgi:
     type: uwsgi
-    uwsgi-dir: "{snap_common}/etc/uwsgi/snap"
-    uwsgi-dir-override: "{snap_common}/etc/uwsgi"
-    uwsgi-log: "{snap_common}/log/uwsgi.log"
+    uwsgi-dir: "{snap_common}/etc/keystone/uwsgi/snap"
+    uwsgi-dir-override: "{snap_common}/etc/keystone/uwsgi"
+    uwsgi-log: "{snap_common}/log/keystone-uwsgi.log"
     config-files:
       - "{snap}/etc/keystone/keystone.conf"
     config-files-override:
@@ -53,8 +58,7 @@ entry_points:
       - "{snap_common}/etc/keystone/keystone.conf.d"
     log-file: "{snap_common}/log/keystone.log"
     templates:
-      admin.ini.j2: "{snap_common}/etc/uwsgi/snap/admin.ini"
-      public.ini.j2: "{snap_common}/etc/uwsgi/snap/public.ini"
+      keystone-api.ini.j2: "{snap_common}/etc/keystone/uwsgi/snap/keystone-api.ini"
   nginx:
     type: nginx
     config-file: "{snap_common}/etc/nginx/snap/nginx.conf"
@@ -70,9 +74,9 @@ entry_points:
     log-file: "{snap_common}/log/nova-api-os-compute.log"
   nova-uwsgi:
     type: uwsgi
-    uwsgi-dir: "{snap_common}/etc/uwsgi/snap"
-    uwsgi-dir-override: "{snap_common}/etc/uwsgi"
-    uwsgi-log: "{snap_common}/log/uwsgi.log"
+    uwsgi-dir: "{snap_common}/etc/nova/uwsgi/snap"
+    uwsgi-dir-override: "{snap_common}/etc/nova/uwsgi"
+    uwsgi-log: "{snap_common}/log/nova-uwsgi.log"
     config-files:
       - "{snap}/etc/nova/nova.conf"
     config-files-override:
@@ -82,7 +86,7 @@ entry_points:
     log-file: "{snap_common}/log/nova-placement-api.log"
     templates:
       nova-placement-api.ini.j2:
-        "{snap_common}/etc/uwsgi/snap/nova-placement-api.ini"
+        "{snap_common}/etc/nova/uwsgi/snap/nova-placement-api.ini"
   nova-conductor:
     binary: "{snap}/bin/nova-conductor"
     config-files:
@@ -101,15 +105,24 @@ entry_points:
     config-dirs:
       - "{snap_common}/etc/nova/nova.conf.d"
     log-file: "{snap_common}/log/nova-scheduler.log"
-  nova-consoleauth:
-    binary: "{snap}/bin/nova-consoleauth"
+  nova-compute:
+    binary: "{snap}/bin/nova-compute"
     config-files:
       - "{snap}/etc/nova/nova.conf"
     config-files-override:
       - "{snap_common}/etc/nova/nova.conf"
     config-dirs:
       - "{snap_common}/etc/nova/nova.conf.d"
-    log-file: "{snap_common}/log/nova-consoleauth.log"
+    log-file: "{snap_common}/log/nova-compute.log"
+  nova-api-metadata:
+    binary: "{snap}/bin/nova-api-metadata"
+    config-files:
+      - "{snap}/etc/nova/nova.conf"
+    config-files-override:
+      - "{snap_common}/etc/nova/nova.conf"
+    config-dirs:
+      - "{snap_common}/etc/nova/nova.conf.d"
+    log-file: "{snap_common}/log/nova-api-metadata.log"
   nova-manage:
     binary: "{snap}/bin/nova-manage"
     config-files:
@@ -139,6 +152,66 @@ entry_points:
     config-dirs:
       - "{snap_common}/etc/neutron/neutron.conf.d"
     log-file: "{snap_common}/log/neutron-server.log"
+  neutron-openvswitch-agent:
+    binary: "{snap}/bin/neutron-openvswitch-agent"
+    config-files:
+      - "{snap}/etc/neutron/neutron.conf"
+      - "{snap}/etc/neutron/plugins/ml2/openvswitch_agent.ini"
+    config-files-override:
+      - "{snap_common}/etc/neutron/neutron.conf"
+      - "{snap_common}/etc/neutron/plugins/ml2/openvswitch_agent.ini"
+    config-dirs:
+      - "{snap_common}/etc/neutron/neutron.conf.d"
+    log-file: "{snap_common}/log/neutron-openvswitch-agent.log"
+  neutron-ovs-cleanup:
+    binary: "{snap}/bin/neutron-ovs-cleanup"
+    config-files:
+      - "{snap}/etc/neutron/neutron.conf"
+    config-files-override:
+      - "{snap_common}/etc/neutron/neutron.conf"
+    config-dirs:
+      - "{snap_common}/etc/neutron/neutron.conf.d"
+  neutron-netns-cleanup:
+    binary: "{snap}/bin/neutron-netns-cleanup"
+    config-files:
+      - "{snap}/etc/neutron/neutron.conf"
+    config-files-override:
+      - "{snap_common}/etc/neutron/neutron.conf"
+    config-dirs:
+      - "{snap_common}/etc/neutron/neutron.conf.d"
+  neutron-l3-agent:
+    binary: "{snap}/bin/neutron-l3-agent"
+    config-files:
+      - "{snap}/etc/neutron/neutron.conf"
+      - "{snap}/etc/neutron/l3_agent.ini"
+    config-files-override:
+      - "{snap_common}/etc/neutron/neutron.conf"
+      - "{snap_common}/etc/neutron/l3_agent.ini"
+    config-dirs:
+      - "{snap_common}/etc/neutron/neutron.conf.d"
+    log-file: "{snap_common}/log/neutron-l3-agent.log"
+  neutron-dhcp-agent:
+    binary: "{snap}/bin/neutron-dhcp-agent"
+    config-files:
+      - "{snap}/etc/neutron/neutron.conf"
+      - "{snap}/etc/neutron/dhcp_agent.ini"
+    config-files-override:
+      - "{snap_common}/etc/neutron/neutron.conf"
+      - "{snap_common}/etc/neutron/dhcp_agent.ini"
+    config-dirs:
+      - "{snap_common}/etc/neutron/neutron.conf.d"
+    log-file: "{snap_common}/log/neutron-dhcp-agent.log"
+  neutron-metadata-agent:
+    binary: "{snap}/bin/neutron-metadata-agent"
+    config-files:
+      - "{snap}/etc/neutron/neutron.conf"
+      - "{snap}/etc/neutron/metadata_agent.ini"
+    config-files-override:
+      - "{snap_common}/etc/neutron/neutron.conf"
+      - "{snap_common}/etc/neutron/metadata_agent.ini"
+    config-dirs:
+      - "{snap_common}/etc/neutron/neutron.conf.d"
+    log-file: "{snap_common}/log/neutron-metadata-agent.log"
   glance-manage:
     binary: "{snap}/bin/glance-manage"
     config-files:
@@ -202,9 +275,9 @@ entry_points:
     log-file: "{snap_common}/log/cinder-volume.log"
   cinder-uwsgi:
     type: uwsgi
-    uwsgi-dir: "{snap_common}/etc/uwsgi/snap"
-    uwsgi-dir-override: "{snap_common}/etc/uwsgi"
-    uwsgi-log: "{snap_common}/log/uwsgi.log"
+    uwsgi-dir: "{snap_common}/etc/cinder/uwsgi/snap"
+    uwsgi-dir-override: "{snap_common}/etc/cinder/uwsgi"
+    uwsgi-log: "{snap_common}/log/cinder-uwsgi.log"
     config-files:
       - "{snap}/etc/cinder/cinder.conf"
     config-files-override:
@@ -213,18 +286,18 @@ entry_points:
       - "{snap_common}/etc/cinder/cinder.conf.d"
     log-file: "{snap_common}/log/cinder-api.log"
     templates:
-      cinder-api.ini.j2: "{snap_common}/etc/uwsgi/snap/cinder-api.ini"
+      cinder-api.ini.j2: "{snap_common}/etc/cinder/uwsgi/snap/cinder-api.ini"
   horizon-uwsgi:
     type: uwsgi
-    uwsgi-dir: "{snap_common}/etc/uwsgi/snap"
-    uwsgi-dir-override: "{snap_common}/etc/uwsgi"
-    uwsgi-log: "{snap_common}/log/uwsgi.log"
+    uwsgi-dir: "{snap_common}/etc/horizon/uwsgi/snap"
+    uwsgi-dir-override: "{snap_common}/etc/horizon/uwsgi"
+    uwsgi-log: "{snap_common}/log/horizon-uwsgi.log"
     config-files:
       - "{snap}/etc/horizon/horizon.conf"
     config-files-override:
       - "{snap_common}/etc/horizon/horizon.conf"
     config-dirs:
       - "{snap_common}/etc/horizon/horizon.conf.d"
-    log-file: "{snap_common}/log/horizon-api.log"
+    log-file: "{snap_common}/log/horizon.log"
     templates:
-      horizon-api.ini.j2: "{snap_common}/etc/uwsgi/snap/horizon-api.ini"
+      horizon.ini.j2: "{snap_common}/etc/horizon/uwsgi/snap/horizon.ini"

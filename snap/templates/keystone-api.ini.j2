@@ -1,6 +1,6 @@
 [uwsgi]
 wsgi-file = {{ snap }}/bin/keystone-wsgi-public
-uwsgi-socket = {{ snap_common }}/run/public.sock
+uwsgi-socket = {{ snap_common }}/run/keystone-api.sock
 buffer-size = 65535
 master = true
 enable-threads = true

@@ -2,6 +2,9 @@
 # Set state path to writable directory
 state_path = {{ snap_common }}/lib
 
+# Set logging directory
+log-dir = {{ snap_common }}/log
+
 [oslo_concurrency]
 # Oslo Concurrency lock path
 lock_path = {{ snap_common }}/lock
