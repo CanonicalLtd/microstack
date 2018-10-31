@@ -18,7 +18,7 @@ environment:
   OS_PROJECT_NAME: admin
   OS_USERNAME: admin
   OS_PASSWORD: keystone
-  OS_AUTH_URL: http://localhost:35357
+  OS_AUTH_URL: http://localhost:5000
   OS_IDENTITY_API_VERSION: 3
   OS_IMAGE_API_VERSION: 2
 
@@ -382,7 +382,7 @@ parts:
 
   # Openvswitch
   ovs-patches:
-    source: snap/patches/
+    source: patches/
     plugin: dump
     organize:
       '*' : patches/
