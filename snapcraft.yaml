@@ -77,7 +77,7 @@ apps:
     daemon: simple
     plugs:
       - network-bind
-  neutron-manage:
+  neutron-db-manage:
     command: snap-openstack neutron-db-manage
     plugs:
       - network
