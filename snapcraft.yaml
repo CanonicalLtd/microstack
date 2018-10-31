@@ -348,6 +348,7 @@ parts:
     python-version: python2
     source: http://tarballs.openstack.org/nova/nova-stable-rocky.tar.gz
     python-packages:
+      - libvirt-python
       - pymysql
       - uwsgi
       - python-memcached
@@ -359,6 +360,11 @@ parts:
       - libssl-dev
       - libxml2-dev
       - libxslt1-dev
+      - libvirt-dev
+    stage-packages:
+      - conntrack
+      - coreutils
+      - qemu-utils
 
   nova-config:
     after: [nova]
