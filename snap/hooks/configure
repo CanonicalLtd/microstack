@@ -21,15 +21,13 @@ if [[ $driver != $driver_saved ]]; then
     snapctl restart $SNAP_NAME
 fi
 
-exit 0
-
 # MySQL Setup
 MYSQL_PASSWORD=fnord  # TODO use snapctl
 
 echo "ALTER USER 'root'@'localhost' IDENTIFIED BY 'fnord';" | mysql-start-client -u root
 
 # Keystone Setup
-echo "CREATE DATABASE IF NOT EXISTS keystone; GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'keystone';" | sudo mysql-start-client -u root -p"$MYSQL_PASSWORD"
+echo "CREATE DATABASE IF NOT EXISTS keystone; GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'keystone';" | mysql-start-client -u root -p"$MYSQL_PASSWORD"
 
 snap-openstack keystone-manage fernet_setup --keystone-user root --keystone-group root
 snap-openstack keystone-manage db_sync
