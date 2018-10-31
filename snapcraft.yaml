@@ -404,7 +404,21 @@ parts:
 
   # Openstack Shared Parts
   templates:
-    after: [keystone, nova, neutron, openvswitch, cinder, horizon]
+    after:
+      - keystone-config
+      - nova-config
+      - neutron-config
+      - glance-config
+      - ovs-wrapper
+      - qemu
+      - kvm-support
+      - libvirt
+      - mysql-server
+      - rabbitmq-server
+      - memcached
+      - cinder-config
+      - horizon-config
+      - python-openstackclient
     plugin: dump
     source: snap
 
@@ -612,7 +626,7 @@ parts:
         - etc/cinder/*.templates
     stage: [$etc]
     prime: [$etc]
-      
+
   # Horizon
   horizon:
     after: [keystone]
@@ -640,5 +654,3 @@ parts:
         - etc/horizon/*.conf
     stage: [$etc]
     prime: [$etc]
-      
-  
