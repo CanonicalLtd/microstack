@@ -66,6 +66,22 @@ apps:
     daemon: simple
     plugs:
       - network
+  nova-compute:
+    command: snap-openstack nova-compute
+    daemon: simple
+    plugs:
+      - network-bind
+      - network-control
+      - firewall-control
+      - hardware-observe
+      - libvirt
+      - openvswitch
+  nova-api-metadata:
+    command: snap-openstack nova-api-metadata
+    daemon: simple
+    plugs:
+      - network-bind
+      - firewall-control
   nova-manage:
     command: snap-openstack nova-manage
     plugs:
@@ -77,6 +93,57 @@ apps:
     daemon: simple
     plugs:
       - network-bind
+  neutron-openvswitch-agent:
+    command: snap-openstack neutron-openvswitch-agent
+    daemon: simple
+    plugs:
+      - network-bind
+      - network-control
+      - network-observe
+      - firewall-control
+      - process-control
+      - system-observe
+      - openvswitch
+  neutron-l3-agent:
+    command: snap-openstack neutron-l3-agent
+    daemon: simple
+    plugs:
+      - network-bind
+      - network-control
+      - network-observe
+      - firewall-control
+      - process-control
+      - system-observe
+      - openvswitch
+  neutron-dhcp-agent:
+    command: snap-openstack neutron-dhcp-agent
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+      - network-control
+      - network-observe
+      - process-control
+      - system-observe
+      - openvswitch
+  neutron-metadata-agent:
+    command: snap-openstack neutron-metadata-agent
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+      - network-control
+  neutron-ovs-cleanup:
+    command: snap-openstack neutron-ovs-cleanup
+    plugs:
+      - network
+      - network-control
+      - openvswitch
+  neutron-netns-cleanup:
+    command: snap-openstack neutron-netns-cleanup
+    plugs:
+      - network
+      - network-control
   neutron-db-manage:
     command: snap-openstack neutron-db-manage
     plugs:
