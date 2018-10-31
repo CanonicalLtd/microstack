@@ -20,3 +20,32 @@ if [[ $driver != $driver_saved ]]; then
     echo "$driver" > $SNAP_COMMON/driver
     snapctl restart $SNAP_NAME
 fi
+
+exit 0
+
+# MySQL Setup
+MYSQL_PASSWORD=fnord  # TODO use snapctl
+
+echo "ALTER USER 'root'@'localhost' IDENTIFIED BY 'fnord';" | mysql-start-client -u root
+
+# Keystone Setup
+echo "CREATE DATABASE IF NOT EXISTS keystone; GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'keystone';" | sudo mysql-start-client -u root -p"$MYSQL_PASSWORD"
+
+snap-openstack keystone-manage fernet_setup --keystone-user root --keystone-group root
+snap-openstack keystone-manage db_sync
+
+sudo systemctl restart snap.microstack.*
+
+openstack user show admin || {
+    snap-openstack keystone-manage bootstrap \
+        --bootstrap-password $OS_PASSWORD \
+        --bootstrap-admin-url http://localhost:35357/v3/ \
+        --bootstrap-internal-url http://localhost:35357/v3/ \
+        --bootstrap-public-url http://localhost:5000/v3/ \
+        --bootstrap-region-id RegionOne
+}
+
+openstack project show service || {
+    openstack project create --domain default --description "Service Project" service
+}
+
