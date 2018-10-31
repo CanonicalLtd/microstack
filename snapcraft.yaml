@@ -654,3 +654,12 @@ parts:
         - etc/horizon/*.conf
     stage: [$etc]
     prime: [$etc]
+
+  # Openstackclient
+  python-openstackclient:
+    after: [keystone]
+    plugin: python
+    python-version: python2
+    python-packages:
+      - python-openstackclient==3.15.0
+    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
