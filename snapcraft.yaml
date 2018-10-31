@@ -48,27 +48,27 @@ apps:
   # Nova
   nova-uwsgi:
     command: snap-openstack nova-uwsgi
-#    daemon: simple
+    daemon: simple
     plugs:
       - network-bind
   nova-api:
     command: snap-openstack nova-api-os-compute
-#    daemon: simple
+    daemon: simple
     plugs:
       - network-bind
   nova-conductor:
     command: snap-openstack nova-conductor
-#    daemon: simple
+    daemon: simple
     plugs:
       - network
   nova-scheduler:
     command: snap-openstack nova-scheduler
-#    daemon: simple
+    daemon: simple
     plugs:
       - network
   nova-consoleauth:
     command: snap-openstack nova-consoleauth
-#    daemon: simple
+    daemon: simple
     plugs:
       - network
   nova-manage:
@@ -79,7 +79,7 @@ apps:
   # Neutron
   neutron-api:
     command: snap-openstack neutron-server
-#    daemon: simple
+    daemon: simple
     plugs:
       - network-bind
   neutron-manage:
@@ -90,12 +90,12 @@ apps:
   # Glance
   glance-api:
     command: snap-openstack glance-api
-#    daemon: simple
+    daemon: simple
     plugs:
       - network-bind
   registry:
     command: snap-openstack glance-registry
-#    daemon: simple
+    daemon: simple
     plugs:
       - network
       - network-bind
@@ -205,12 +205,12 @@ apps:
   # Cinder
   cinder-uwsgi:
     command: snap-openstack cinder-uwsgi
-#    daemon: simple
+    daemon: simple
     plugs:
       - network-bind
   cinder-backup:
     command: snap-openstack cinder-backup
-#    daemon: simple
+    daemon: simple
     plugs:
       - network
   cinder-manage:
@@ -219,19 +219,19 @@ apps:
       - network
   cinder-scheduler:
     command: snap-openstack cinder-scheduler
-#    daemon: simple
+    daemon: simple
     plugs:
       - network
   cinder-volume:
     command: snap-openstack cinder-volume
-#    daemon: simple
+    daemon: simple
     plugs:
       - network
 
   # Horizon
   horizon-uwsgi:
     command: snap-openstack horizon-uwsgi
-#    daemon: simple
+    daemon: simple
     plugs:
       - network-bind
 
