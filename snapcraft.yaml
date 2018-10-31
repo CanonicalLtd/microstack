@@ -66,11 +66,6 @@ apps:
     daemon: simple
     plugs:
       - network
-  nova-consoleauth:
-    command: snap-openstack nova-consoleauth
-    daemon: simple
-    plugs:
-      - network
   nova-manage:
     command: snap-openstack nova-manage
     plugs:

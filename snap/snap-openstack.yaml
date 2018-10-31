@@ -103,15 +103,6 @@ entry_points:
     config-dirs:
       - "{snap_common}/etc/nova/nova.conf.d"
     log-file: "{snap_common}/log/nova-scheduler.log"
-  nova-consoleauth:
-    binary: "{snap}/bin/nova-consoleauth"
-    config-files:
-      - "{snap}/etc/nova/nova.conf"
-    config-files-override:
-      - "{snap_common}/etc/nova/nova.conf"
-    config-dirs:
-      - "{snap_common}/etc/nova/nova.conf.d"
-    log-file: "{snap_common}/log/nova-consoleauth.log"
   nova-manage:
     binary: "{snap}/bin/nova-manage"
     config-files:
