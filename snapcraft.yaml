@@ -409,6 +409,12 @@ parts:
     stage: [$etc]
     prime: [$etc]
 
+  neutron-dependencies:
+    after: [neutron]
+    plugin: nil
+    stage-packages:
+      - haproxy
+
   # Glance
   glance:
     after: [keystone]  # We arbitrarily rely on keystone to patch some things
