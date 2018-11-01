@@ -449,7 +449,7 @@ parts:
       - "--sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/etc"
     after:
       - ovs-patches
-    prepare: |
+    override-build: |
       # Apply patches
       for patch in ${SNAPCRAFT_STAGE}/patches/openvswitch/*.patch; do
         echo "Applying $(basename "$patch") ..."
@@ -460,6 +460,7 @@ parts:
           --input "$patch"
         echo
       done
+      snapcraftctl build
 
   ovs-wrapper:
     source: conf
@@ -486,10 +487,11 @@ parts:
       - libpcre3-dev
       - libssl-dev
       - python-six
-    prepare: |
+    override-build: |
       export SNAP_ROOT="../../.."
       export SNAP_SOURCE="$SNAP_ROOT/parts/nginx/build"
       patch -d $SNAP_SOURCE -p1 < $SNAP_ROOT/patches/drop-nginx-setgroups.patch
+      snapcraftctl build
 
   libxml2:
     source: http://xmlsoft.org/sources/libxml2-2.9.4.tar.gz
