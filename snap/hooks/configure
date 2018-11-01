@@ -153,8 +153,7 @@ openstack service show network || {
     done
 }
 
-# TODO correct naming of manage script
-snap-openstack neutron-manage upgrade head
+snap-openstack neutron-db-manage upgrade head
 
 systemctl restart snap.microstack.neutron-*
 
