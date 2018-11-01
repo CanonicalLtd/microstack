@@ -43,7 +43,8 @@ export HOME=$SNAP_COMMON/lib/rabbitmq  # TODO: unset this?
 # TODO: develop this a bit more -- not 100% that this does what we want.
 while :;
 do
-    (grep "Starting broker... completed" /var/snap/microstack/common/log/rabbitmq/startup_log && break) || echo "waiting for rabbitmq to start" && sleep 1;
+    grep "Starting broker... completed" /var/snap/microstack/common/log/rabbitmq/startup_log && break
+    echo "waiting for rabbitmq to start" && sleep 1;
 done
 
 rabbitmqctl add_user openstack rabbitmq || true
