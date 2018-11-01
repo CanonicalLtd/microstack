@@ -468,7 +468,6 @@ parts:
       - openvswitch
 
   nginx:
-    after: [keystone, nova, neutron, openvswitch]
     source: http://www.nginx.org/download/nginx-1.13.0.tar.gz
     plugin: autotools
     configflags:
