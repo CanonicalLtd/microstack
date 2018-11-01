@@ -394,7 +394,7 @@ parts:
     prime: [$etc]
 
   cinder-config:
-    after: [cinder]
+    after: [openstack-projects]
     plugin: dump
     source: http://tarballs.openstack.org/cinder/cinder-stable-rocky.tar.gz
     organize:
