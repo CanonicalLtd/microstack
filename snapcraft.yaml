@@ -756,3 +756,31 @@ parts:
     python-packages:
       - python-openstackclient==3.15.0
     constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
+
+  bridge-utils:
+    source: https://www.kernel.org/pub/linux/utils/net/bridge-utils/bridge-utils-1.6.tar.gz
+    plugin: autotools
+  iproute2:
+    source: https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-4.9.0.tar.gz
+    plugin: autotools
+    build-packages:
+      - bison
+      - flex
+      - libdb5.3-dev
+  iptables:
+    source: http://iptables.netfilter.org/projects/iptables/files/iptables-1.6.0.tar.bz2
+    plugin: autotools
+    build-packages:
+      - libnftnl-dev
+    configflags:
+      - --disable-nftables
+    install: |
+      cp --remove-destination $SNAPCRAFT_PART_INSTALL/sbin/xtables-multi $SNAPCRAFT_PART_INSTALL/bin/iptables-xml
+  ipset:
+    source: http://ipset.netfilter.org/ipset-6.30.tar.bz2
+    plugin: autotools
+    build-packages:
+      - libltdl-dev
+      - libmnl-dev
+    configflags:
+      - "--with-kmod=no"
