@@ -267,12 +267,12 @@ apps:
   # Cinder
   cinder-uwsgi:
     command: snap-openstack cinder-uwsgi
-    daemon: simple
+#    daemon: simple
     plugs:
       - network-bind
   cinder-backup:
     command: snap-openstack cinder-backup
-    daemon: simple
+#    daemon: simple
     plugs:
       - network
   cinder-manage:
@@ -281,12 +281,12 @@ apps:
       - network
   cinder-scheduler:
     command: snap-openstack cinder-scheduler
-    daemon: simple
+#    daemon: simple
     plugs:
       - network
   cinder-volume:
     command: snap-openstack cinder-volume
-    daemon: simple
+#    daemon: simple
     plugs:
       - network
 
