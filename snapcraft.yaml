@@ -336,7 +336,7 @@ parts:
       # as stated in PEP-0370
       sed -i usr/lib/python2.7/site.py -e 's/^ENABLE_USER_SITE = None$/ENABLE_USER_SITE = False/'
       # This is the last step, let's now compile all our pyc files.
-      ./usr/bin/python2.7 -m compileall usr/lib/python2.7
+      ./usr/bin/python2.7 -m compileall lib/python2.7
 
   keystone-config:
     after: [openstack-projects]
