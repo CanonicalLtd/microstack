@@ -418,8 +418,8 @@ parts:
     stage: [$etc]
     prime: [$etc]
 
-  # Openvswitch
-  ovs-patches:
+  # Snap patches
+  patches:
     source: patches/
     plugin: dump
     organize:
@@ -446,7 +446,7 @@ parts:
       - "--localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common"
       - "--sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/etc"
     after:
-      - ovs-patches
+      - patches
     override-build: |
       # Apply patches
       for patch in ${SNAPCRAFT_STAGE}/patches/openvswitch/*.patch; do
@@ -471,6 +471,8 @@ parts:
   nginx:
     source: http://www.nginx.org/download/nginx-1.13.0.tar.gz
     plugin: autotools
+    after:
+      - patches
     configflags:
       - --prefix=/usr
       - --http-log-path=/var/snap/microstack/common/log/nginx-access.log
