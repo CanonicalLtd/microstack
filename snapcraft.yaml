@@ -521,8 +521,7 @@ parts:
     - try: [msr-tools]
 
   libvirt:
-    source: .
-    source-subdir: libvirt-1.3.1
+    source: https://libvirt.org/sources/libvirt-4.6.0.tar.xz
     plugin: autotools
     build-packages:
     - libxml2-dev
@@ -580,12 +579,6 @@ parts:
     - DMIDECODE=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/sbin/dmidecode
     - OVSVSCTL=/snap/$SNAPCRAFT_PROJECT_NAME/current/bin/ovs-vsctl
     - EBTABLES_PATH=/snap/$SNAPCRAFT_PROJECT_NAME/current/sbin/ebtables
-    override-build: |
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_1.3.1.orig.tar.gz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_1.3.1-1ubuntu10.24.debian.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_1.3.1-1ubuntu10.24.dsc
-      dpkg-source -x libvirt*.dsc
-      snapcraftctl build
     organize:
       # Hack to shift installed libvirt back to root of snap
       # required to ensure that pathing to files etc works at
