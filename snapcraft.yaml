@@ -329,6 +329,10 @@ parts:
       - coreutils
       - qemu-utils
       - haproxy
+    override-build: |
+      # Ensure libvirt is discovered from previous built part
+      export PKG_CONFIG_PATH=$SNAPCRAFT_STAGE/lib/pkgconfig
+      snapcraftctl build
     override-prime: |
       snapcraftctl prime
       # Now that everything is built, let's disable user site-packages
