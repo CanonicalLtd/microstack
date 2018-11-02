@@ -549,9 +549,8 @@ parts:
     - libnl-route-3-dev
     - uuid-dev
     - try: [libnuma-dev]
-    - wget
-    - dpkg-dev
     - xsltproc
+    - libjansson-dev
     stage-packages:
     - dmidecode
     - dnsmasq
