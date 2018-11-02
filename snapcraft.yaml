@@ -551,6 +551,7 @@ parts:
     - try: [libnuma-dev]
     - wget
     - dpkg-dev
+    - xsltproc
     stage-packages:
     - dmidecode
     - dnsmasq
