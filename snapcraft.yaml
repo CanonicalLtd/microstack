@@ -8,7 +8,7 @@ description: |
 grade: devel
 confinement: classic
 environment:
-  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu
+  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
   PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
   LC_ALL: C
   OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
@@ -215,13 +215,10 @@ apps:
 
   # Libvirt/Qemu
   libvirt-bin:
-    command: bin/launch-libvirtd
+    command: sbin/libvirtd
     daemon: simple
   virsh:
-    command: bin/virsh
-    environment:
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
+    command: virsh
 
   # MySQL
   # MySQL
@@ -464,10 +461,12 @@ parts:
       snapcraftctl build
 
   ovs-wrapper:
-    source: conf
+    source: ./snap-wrappers/ovs
     plugin: dump
     after:
       - openvswitch
+    organize:
+      ovs-wrapper: bin/ovs-wrapper
 
   nginx:
     source: http://www.nginx.org/download/nginx-1.13.0.tar.gz
@@ -489,9 +488,16 @@ parts:
       - libssl-dev
       - python-six
     override-build: |
-      export SNAP_ROOT="../../.."
-      export SNAP_SOURCE="$SNAP_ROOT/parts/nginx/build"
-      patch -d $SNAP_SOURCE -p1 < $SNAP_ROOT/patches/drop-nginx-setgroups.patch
+      # Apply patches
+      for patch in ${SNAPCRAFT_STAGE}/patches/nginx/*.patch; do
+        echo "Applying $(basename "$patch") ..."
+        patch \
+          --batch \
+          --forward \
+          --strip 1 \
+          --input "$patch"
+        echo
+      done
       snapcraftctl build
 
   libxml2:
@@ -553,6 +559,7 @@ parts:
     - try: [libnuma1]
     - libcurl3-gnutls
     - libpciaccess0
+    - libxml2-utils
     configflags:
     - --with-qemu
     - --without-bhyve
@@ -589,7 +596,7 @@ parts:
   # MySQL
   mysql-server:
     plugin: dump
-    source: ./scripts/mysql
+    source: ./snap-wrappers/mysql
     stage-packages:
       - mysql-server
       - mysql-client
@@ -599,7 +606,7 @@ parts:
 
   # RabbitMQ
   rabbitmq-server:
-    source: ./scripts/rabbitmq
+    source: ./snap-wrappers/rabbitmq
     plugin: dump
     stage-packages:
       - rabbitmq-server
@@ -666,7 +673,7 @@ parts:
       - "--with-kmod=no"
 
   # Openstack Shared Parts
-  templates:
+  overlay:
     after:
       - keystone-config
       - nova-config
@@ -682,7 +689,7 @@ parts:
       - rabbitmq-server
       - memcached
     plugin: dump
-    source: snap
+    source: snap-overlay
 
   configure-the-things:
     plugin: dump
