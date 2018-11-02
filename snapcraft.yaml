@@ -639,8 +639,8 @@ parts:
     source: http://www.sourceware.org/pub/lvm2/releases/LVM2.2.02.172.tgz
     plugin: autotools
     configflags:
-      - --with-confdir=/var/snap/common/etc/
-      - --with-default-system-dir=/var/snap/common/etc/
+      - --with-confdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/etc/
+      - --with-default-system-dir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/etc/
     build-attributes: [no-patchelf]
 
   # Misc utils for hypervisor networking
