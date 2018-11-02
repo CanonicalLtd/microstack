@@ -299,8 +299,6 @@ parts:
   openstack-projects:
     plugin: python
     python-version: python2
-    after:
-      - libvirt
     constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
     source: http://tarballs.openstack.org/keystone/keystone-stable-rocky.tar.gz
     python-packages:
@@ -323,7 +321,7 @@ parts:
       - libssl-dev
       - libxml2-dev
       - libxslt1-dev
-      - pkg-config
+      - libvirt-dev
     stage-packages:
       - conntrack
       - coreutils
