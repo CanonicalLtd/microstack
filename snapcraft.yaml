@@ -476,15 +476,15 @@ parts:
       - patches
     configflags:
       - --prefix=/usr
-      - --http-log-path=/var/snap/microstack/common/log/nginx-access.log
-      - --error-log-path=/var/snap/microstack/common/log/nginx-error.log
-      - --lock-path=/var/snap/microstack/common/lock/nginx.lock
-      - --pid-path=/var/snap/microstack/common/run/nginx.pid
-      - --http-client-body-temp-path=/var/snap/microstack/common/lib/nginx_client_body
-      - --http-proxy-temp-path=/var/snap/microstack/common/lib/nginx_proxy
-      - --http-fastcgi-temp-path=/var/snap/microstack/common/lib/nginx_fastcgi
-      - --http-uwsgi-temp-path=/var/snap/microstack/common/lib/nginx_uwsgi
-      - --http-scgi-temp-path=/var/snap/microstack/common/lib/nginx_scgi
+      - "--http-log-path=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/log/nginx-access.log"
+      - "--error-log-path=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/log/nginx-error.log"
+      - "--lock-path=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/lock/nginx.lock"
+      - "--pid-path=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/run/nginx.pid"
+      - "--http-client-body-temp-path=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/lib/nginx_client_body"
+      - "--http-proxy-temp-path=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/lib/nginx_proxy"
+      - "--http-fastcgi-temp-path=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/lib/nginx_fastcgi"
+      - "--http-uwsgi-temp-path=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/lib/nginx_uwsgi"
+      - "--http-scgi-temp-path=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/lib/nginx_scgi"
       - --with-http_ssl_module
     build-packages:
       - libpcre3-dev
