@@ -567,7 +567,7 @@ parts:
       - --disable-user
       - --disable-linux-user
       - --enable-system
-      - --cpu
+      - --target-list=x86_64-softmmu
     override-build: |
       wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg.orig.tar.xz
       wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.32.debian.tar.xz
