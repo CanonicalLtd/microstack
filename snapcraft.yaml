@@ -520,12 +520,12 @@ parts:
     - on arm64: [qemu-system-arm]
     - qemu-utils
     - libslang2
-#    organize:
-#      usr/lib/*/pulseaudio/libpulsecommon-8.0.so: usr/lib/libpulsecommon-8.0.so
-#      usr/share/seabios/bios-256k.bin: qemu/bios-256k.bin
-#      usr/share/seabios/vgabios-stdvga.bin: qemu/vgabios-stdvga.bin
-#      usr/share/seabios/kvmvapic.bin: qemu/kvmvapic.bin
-#      usr/lib/ipxe/qemu/efi-virtio.rom: qemu/efi-virtio.rom
+    organize:
+      usr/lib/*/pulseaudio/libpulsecommon-8.0.so: usr/lib/libpulsecommon-8.0.so
+      usr/share/seabios/bios-256k.bin: qemu/bios-256k.bin
+      usr/share/seabios/vgabios-stdvga.bin: qemu/vgabios-stdvga.bin
+      usr/share/seabios/kvmvapic.bin: qemu/kvmvapic.bin
+      usr/lib/ipxe/qemu/efi-virtio.rom: qemu/efi-virtio.rom
 
   kvm-support:
     plugin: nil
