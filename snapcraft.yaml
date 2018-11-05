@@ -524,6 +524,7 @@ parts:
     stage-packages:
       - seabios
       - ipxe-qemu
+    build-attributes: [no-patchelf]
     build-packages:
       - acpica-tools
       - libaio-dev
