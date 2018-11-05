@@ -1,0 +1,6 @@
+#!/bin/sh -e
+
+# Workaround to ensure BIOS can be loaded
+cd $SNAP/qemu
+
+exec "$SNAP/sbin/libvirtd"
