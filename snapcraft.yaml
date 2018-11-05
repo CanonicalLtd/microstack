@@ -576,6 +576,22 @@ parts:
       # runtime
       # * is not used to avoid directory merge conflicts
       snap/microstack/current/: ./
+    filesets:
+      qemu:
+        - usr/lib/*
+        - lib/*
+        - usr/share/*
+        - on amd64:
+          - bin/qemu-system-x86
+        - on i386:
+          - bin/qemu-system-x86
+        - on armhf:
+          - bin/qemu-system-arm
+        - on arm64:
+          - bin/qemu-system-arm
+    stage: [$qemu]
+    prime: [$qemu]
+
 
   kvm-support:
     plugin: nil
