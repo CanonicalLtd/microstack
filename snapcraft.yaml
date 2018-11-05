@@ -28,11 +28,10 @@ apps:
     command: openstack
     plugs:
       - network
-  configure-the-things:
-    command: bin/configure-the-things.sh
+  configure-openstack:
+    command: configure-openstack
     plugs:
       - network
-      - process-control
 
   # Keystone
   keystone-uwsgi:
