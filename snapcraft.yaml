@@ -519,20 +519,63 @@ parts:
 
   # libvirt/qemu
   qemu:
-    plugin: nil
+    source: .
+    source-subdir: qemu-2.5+dfsg
+    plugin: autotools
     stage-packages:
-    - on amd64: [qemu-system-x86]
-    - on i386: [qemu-system-x86]
-    - on armhf: [qemu-system-arm]
-    - on arm64: [qemu-system-arm]
-    - qemu-utils
-    - libslang2
+      - seabios
+      - ipxe-qemu
+    build-packages:
+      - acpica-tools
+      - libaio-dev
+      - libasound2-dev
+      - libattr1-dev
+      - libbluetooth-dev
+      - libcap-dev
+      - libcap-ng-dev
+      - libcurl4-gnutls-dev
+      - libfdt-dev
+      - gnutls-dev
+      - libiscsi-dev
+      - libncurses5-dev
+      - try: [libnuma-dev]
+      - libpixman-1-dev
+      - libpulse-dev
+      - librados-dev
+      - librbd-dev
+      - libsasl2-dev
+      - libsdl1.2-dev
+      - libspice-server-dev
+      - libspice-protocol-dev
+      - libusb-1.0-0-dev
+      - libusbredirparser-dev
+      - linux-libc-dev
+      - uuid-dev
+      - xfslibs-dev
+      - libjpeg-dev
+      - zlib1g-dev
+      - libpng-dev
+      - wget
+      - dpkg-dev
+      - gcc
+    configflags:
+      - --disable-blobs
+      - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current
+      - --localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
+      - --sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
+      - --extra-cflags=-DCONFIG_QEMU_DATAPATH='"/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/qemu:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/seabios:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/ipxe/qemu"'
+    override-build: |
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg.orig.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.32.debian.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.32.dsc
+      dpkg-source -x qemu_*.dsc
+      snapcraftctl build
     organize:
-      usr/lib/*/pulseaudio/libpulsecommon-8.0.so: usr/lib/libpulsecommon-8.0.so
-      usr/share/seabios/bios-256k.bin: qemu/bios-256k.bin
-      usr/share/seabios/vgabios-stdvga.bin: qemu/vgabios-stdvga.bin
-      usr/share/seabios/kvmvapic.bin: qemu/kvmvapic.bin
-      usr/lib/ipxe/qemu/efi-virtio.rom: qemu/efi-virtio.rom
+      # Hack to shift installed qemu back to root of snap
+      # required to ensure that pathing to files etc works at
+      # runtime
+      # * is not used to avoid directory merge conflicts
+      snap/microstack/current/: ./
 
   kvm-support:
     plugin: nil
