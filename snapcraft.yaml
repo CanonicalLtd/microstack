@@ -523,7 +523,8 @@ parts:
     stage-packages:
       - seabios
       - ipxe-qemu
-    build-attributes: [no-patchelf]
+      - try:
+        - libnuma1
     build-packages:
       - acpica-tools
       - libaio-dev
@@ -563,18 +564,10 @@ parts:
       - --localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
       - --sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
       - --extra-cflags=-DCONFIG_QEMU_DATAPATH='"/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/qemu:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/seabios:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/ipxe/qemu"'
-      - on amd64:
-        - --target-list=x86_64-softmmu
-      - on i386:
-        - --target-list=i386-softmmu
-      - on arm64:
-        - --target-list=aarch64-softmmu
-      - on armhf:
-        - --target-list=arm-softmmu
-      - on ppc64el:
-        - --target-list=ppc64-softmmu
-      - on s390x:
-        - --target-list=s390x-softmmu
+      - --disable-user
+      - --disable-linux-user
+      - --enable-system
+      - --cpu
     override-build: |
       wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg.orig.tar.xz
       wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.32.debian.tar.xz
