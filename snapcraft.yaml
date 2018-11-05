@@ -563,7 +563,7 @@ parts:
       - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current
       - --localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
       - --sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
-      - --extra-cflags=-DCONFIG_QEMU_DATAPATH='"/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/qemu:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/seabios:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/ipxe/qemu"'
+      - --extra-cflags=-DCONFIG_QEMU_DATAPATH='"/snap/$SNAPCRAFT_PROJECT_NAME/current/share/qemu:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/seabios:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/ipxe/qemu"'
       - --disable-user
       - --disable-linux-user
       - --enable-system
