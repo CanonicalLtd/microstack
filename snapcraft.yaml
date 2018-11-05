@@ -744,20 +744,6 @@ parts:
 
   # Openstack Shared Parts
   overlay:
-    after:
-      - keystone-config
-      - nova-config
-      - neutron-config
-      - glance-config
-      - cinder-config
-      - horizon-config
-      - openvswitch
-      - qemu
-      - kvm-support
-      - libvirt
-      - mysql-server
-      - rabbitmq-server
-      - memcached
     plugin: dump
     source: snap-overlay
 
