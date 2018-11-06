@@ -213,18 +213,13 @@ apps:
       - network
 
   # Libvirt/Qemu
-  libvirt-bin:
-    command: launch-libvirtd
+  libvirtd:
+    command: libvirtd
     daemon: simple
     environment:
       LD_LIBRARY_PATH: $SNAP/lib:$SNAP/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
   virsh:
     command: virsh
-    environment:
-      PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
-      LC_ALL: C
 
   # MySQL
   # MySQL
@@ -691,14 +686,6 @@ parts:
       # runtime
       # * is not used to avoid directory merge conflicts
       snap/microstack/current/: ./
-
-  libvirtd-wrapper:
-    source: ./snap-wrappers/libvirtd
-    plugin: dump
-    after:
-      - libvirt
-    organize:
-      launch-libvirtd: bin/launch-libvirtd
 
   # MySQL
   mysql-server:
