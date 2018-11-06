@@ -451,6 +451,7 @@ parts:
       - python-setuptools
     stage-packages:
       - uuid-runtime
+      - libunbound2
     configflags:
       - "--localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common"
       - "--sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/etc"
@@ -525,6 +526,38 @@ parts:
       - ipxe-qemu
       - try:
         - libnuma1
+      - libasound2
+      - libasyncns0
+      - libbluetooth3
+      - libboost-iostreams1.58.0
+      - libboost-random1.58.0
+      - libboost-system1.58.0
+      - libboost-thread1.58.0
+      - libcaca0
+      - libfdt1
+      - libflac8
+      - libiscsi2
+      - libjpeg-turbo8
+      - libnspr4
+      - libnss3
+      - libogg0
+      - libopus0
+      - libpixman-1-0
+      - libpulse0
+      - librados2
+      - librbd1
+      - libsdl1.2debian
+      - libsndfile1
+      - libspice-server1
+      - libusb-1.0-0
+      - libusbredirparser1
+      - libvorbis0a
+      - libvorbisenc2
+      - libx11-6
+      - libxau6
+      - libxcb1
+      - libxdmcp6
+      - libxext6
     build-packages:
       - acpica-tools
       - libaio-dev
@@ -703,6 +736,8 @@ parts:
       - libevent-dev
       - gcc
       - make
+    stage-packages:
+      - libevent-2.0-5
     override-build: |
       ./configure --prefix=$SNAPCRAFT_PART_INSTALL
       make
