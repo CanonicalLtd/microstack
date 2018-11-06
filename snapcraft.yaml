@@ -28,7 +28,9 @@ apps:
     command: openstack
     plugs:
       - network
-  configure-openstack:
+
+  # OpenStack Service Configuration
+  configure:
     command: configure-openstack
     plugs:
       - network
