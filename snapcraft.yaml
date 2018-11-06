@@ -25,193 +25,193 @@ apps:
   # Openstack
   openstack:
     command: openstack
-    plugs:
-      - network
+#    plugs:
+#      - network
 
   # OpenStack Service Configuration
   configure:
     command: configure-openstack
-    plugs:
-      - network
+#    plugs:
+#      - network
 
   # Keystone
   keystone-uwsgi:
     command: snap-openstack keystone-uwsgi
     daemon: simple
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
   keystone-manage:
     command: snap-openstack keystone-manage
-    plugs:
-      - network
+#    plugs:
+#      - network
 
   # Nova
   nova-uwsgi:
     command: snap-openstack nova-uwsgi
     daemon: simple
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
   nova-api:
     command: snap-openstack nova-api-os-compute
     daemon: simple
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
   nova-conductor:
     command: snap-openstack nova-conductor
     daemon: simple
-    plugs:
-      - network
+#    plugs:
+#      - network
   nova-scheduler:
     command: snap-openstack nova-scheduler
     daemon: simple
-    plugs:
-      - network
+#    plugs:
+#      - network
   nova-compute:
     command: snap-openstack nova-compute
     daemon: simple
-    plugs:
-      - network-bind
-      - network-control
-      - firewall-control
-      - hardware-observe
-      - libvirt
-      - openvswitch
+#    plugs:
+#      - network-bind
+#      - network-control
+#      - firewall-control
+#      - hardware-observe
+#      - libvirt
+#      - openvswitch
   nova-api-metadata:
     command: snap-openstack nova-api-metadata
     daemon: simple
-    plugs:
-      - network-bind
-      - firewall-control
+#    plugs:
+#      - network-bind
+#      - firewall-control
   nova-manage:
     command: snap-openstack nova-manage
-    plugs:
-      - network
+#    plugs:
+#      - network
 
   # Neutron
   neutron-api:
     command: snap-openstack neutron-server
     daemon: simple
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
   neutron-openvswitch-agent:
     command: snap-openstack neutron-openvswitch-agent
     daemon: simple
-    plugs:
-      - network-bind
-      - network-control
-      - network-observe
-      - firewall-control
-      - process-control
-      - system-observe
-      - openvswitch
+#    plugs:
+#      - network-bind
+#      - network-control
+#      - network-observe
+#      - firewall-control
+#      - process-control
+#      - system-observe
+#      - openvswitch
   neutron-l3-agent:
     command: snap-openstack neutron-l3-agent
     daemon: simple
-    plugs:
-      - network-bind
-      - network-control
-      - network-observe
-      - firewall-control
-      - process-control
-      - system-observe
-      - openvswitch
+#    plugs:
+#      - network-bind
+#      - network-control
+#      - network-observe
+#      - firewall-control
+#      - process-control
+#      - system-observe
+#      - openvswitch
   neutron-dhcp-agent:
     command: snap-openstack neutron-dhcp-agent
     daemon: simple
-    plugs:
-      - network
-      - network-bind
-      - network-control
-      - network-observe
-      - process-control
-      - system-observe
-      - openvswitch
+#    plugs:
+#      - network
+#      - network-bind
+#      - network-control
+#      - network-observe
+#      - process-control
+#      - system-observe
+#      - openvswitch
   neutron-metadata-agent:
     command: snap-openstack neutron-metadata-agent
     daemon: simple
-    plugs:
-      - network
-      - network-bind
-      - network-control
+#    plugs:
+#      - network
+#      - network-bind
+#      - network-control
   neutron-ovs-cleanup:
     command: snap-openstack neutron-ovs-cleanup
-    plugs:
-      - network
-      - network-control
-      - openvswitch
+#    plugs:
+#      - network
+#      - network-control
+#      - openvswitch
   neutron-netns-cleanup:
     command: snap-openstack neutron-netns-cleanup
-    plugs:
-      - network
-      - network-control
+#    plugs:
+#      - network
+#      - network-control
   neutron-db-manage:
     command: snap-openstack neutron-db-manage
-    plugs:
-      - network
+#    plugs:
+#      - network
 
   # Glance
   glance-api:
     command: snap-openstack glance-api
     daemon: simple
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
   registry:
     command: snap-openstack glance-registry
     daemon: simple
-    plugs:
-      - network
-      - network-bind
+#    plugs:
+#      - network
+#      - network-bind
   glance-manage:
     command: snap-openstack glance-manage
-    plugs:
-      - network
+#    plugs:
+#      - network
 
   # Openstack Shared Services
   nginx:
     command: snap-openstack nginx
     daemon: forking
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
 
   # Openvswitch
   ovs-vswitchd:
     command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server --no-monitor --system-id=random start
     stop-command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server stop
     daemon: forking
-    plugs:
-      - network
-      - network-bind
-      - network-control
-      - openvswitch-support
-      - process-control
-      - system-trace
+#    plugs:
+#      - network
+#      - network-bind
+#      - network-control
+#      - openvswitch-support
+#      - process-control
+#      - system-trace
   ovsdb-server:
     command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovs-vswitchd --no-monitor --system-id=random start
     stop-command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovs-vswitchd stop
     daemon: forking
-    plugs:
-      - network
-      - network-bind
-      - network-control
-      - openvswitch-support
-      - process-control
-      - system-trace
+#    plugs:
+#      - network
+#      - network-bind
+#      - network-control
+#      - openvswitch-support
+#      - process-control
+#      - system-trace
   ovs-vsctl:
     command: ovs-wrapper $SNAP/bin/ovs-vsctl
-    plugs:
-      - network
+#    plugs:
+#      - network
   ovs-appctl:
     command: ovs-wrapper $SNAP/bin/ovs-appctl
-    plugs:
-      - network
+#    plugs:
+#      - network
   ovs-ofctl:
     command: ovs-wrapper $SNAP/bin/ovs-ofctl
-    plugs:
-      - network
+#    plugs:
+#      - network
   ovs-dpctl:
     command: ovs-wrapper $SNAP/bin/ovs-dpctl
-    plugs:
-      - network
+#    plugs:
+#      - network
 
   # Libvirt/Qemu
   libvirtd:
@@ -223,32 +223,31 @@ apps:
     command: virsh
 
   # MySQL
-  # MySQL
   mysqld:
     command: mysql-start-server
     daemon: simple
-    plugs:
-      - process-control
-      - network
-      - network-bind
+#    plugs:
+#      - process-control
+#      - network
+#      - network-bind
   mysql:
     command: mysql-start-client
-    plugs:
-      - process-control
-      - network
+#    plugs:
+#      - process-control
+#      - network
 
   # RabbitMQ
   rabbitmq-server:
     command: rabbitmq-server
     daemon: simple
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
     environment:
       HOME: $SNAP_COMMON/lib/rabbitmq
   rabbitmqctl:
     command: rabbitmqctl
-    plugs:
-      - network
+#    plugs:
+#      - network
     environment:
       HOME: $SNAP_COMMON/lib/rabbitmq
   rabbitmq-plugins:
@@ -260,41 +259,41 @@ apps:
   memcached:
     command: memcached -u root -v
     daemon: simple
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
 
   # Cinder
   cinder-uwsgi:
     command: snap-openstack cinder-uwsgi
 #    daemon: simple
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
   cinder-backup:
     command: snap-openstack cinder-backup
 #    daemon: simple
-    plugs:
-      - network
+#    plugs:
+#      - network
   cinder-manage:
     command: snap-openstack cinder-manage
-    plugs:
-      - network
+#    plugs:
+#      - network
   cinder-scheduler:
     command: snap-openstack cinder-scheduler
 #    daemon: simple
-    plugs:
-      - network
+#    plugs:
+#      - network
   cinder-volume:
     command: snap-openstack cinder-volume
 #    daemon: simple
-    plugs:
-      - network
+#    plugs:
+#      - network
 
   # Horizon
   horizon-uwsgi:
     command: snap-openstack horizon-uwsgi
     daemon: simple
-    plugs:
-      - network-bind
+#    plugs:
+#      - network-bind
 
 parts:
   # OpenStack Python Projects, keyed off Keystone
