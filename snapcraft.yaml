@@ -737,7 +737,7 @@ parts:
       - gcc
       - make
     stage-packages:
-      - libevent-2.0
+      - libevent-2.0-5
     override-build: |
       ./configure --prefix=$SNAPCRAFT_PART_INSTALL
       make
