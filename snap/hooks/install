@@ -3,3 +3,9 @@ set -e
 
 install -D $SNAP/var/snap/microstack/common/libvirt/libvirtd.conf $SNAP_COMMON/libvirt/libvirtd.conf
 sed -i 's/unix_sock_group = "libvirtd"/unix_sock_group = "sudo"/' $SNAP_COMMON/libvirt/libvirtd.conf
+
+# MySQL snapshot for speedy install
+# snapshot is a mysql data dir with
+# rocky keystone,nova,glance,neutron dbs.
+mkdir -p ${SNAP_COMMON}/lib
+tar -xJf ${SNAP}/data/mysql.tar.xz -C ${SNAP_COMMON}/lib
