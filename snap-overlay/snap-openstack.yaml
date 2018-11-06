@@ -21,7 +21,7 @@ setup:
     - "{snap_common}/lock"
     - "{snap_common}/log"
     - "{snap_common}/run"
-    - "{snap_common}/instances"
+    - "{snap_common}/lib/instances"
   templates:
     keystone-nginx.conf.j2: "{snap_common}/etc/nginx/snap/sites-enabled/keystone.conf"
     keystone-snap.conf.j2: "{snap_common}/etc/keystone/keystone.conf.d/keystone-snap.conf"
