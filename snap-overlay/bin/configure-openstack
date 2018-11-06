@@ -1,36 +1,7 @@
 #!/bin/bash -e
 
-# Install conf.d configuration from snap for db etc
-for project in neutron nova keystone glance; do
-    mkdir -p ${SNAP_COMMON}/etc/${project}/${project}.conf.d
-    cp -r ${SNAP}/etc/${project}/${project}.conf.d/* ${SNAP_COMMON}/etc/${project}/${project}.conf.d
-done
-
-# Create all of the databases
-for db in neutron nova nova_api nova_cell0 cinder glance keystone; do
-    echo "CREATE DATABASE IF NOT EXISTS ${db}; GRANT ALL PRIVILEGES ON ${db}.* TO '${db}'@'localhost' IDENTIFIED BY '${db}';" \
-        | mysql-start-client -u root
-done
-
-# Grant nova user access to cell0
-echo "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';" | mysql-start-client -u root
-
-# RabbitMQ
-echo "rabbit setup"
-export HOME=$SNAP_COMMON/lib/rabbitmq  # TODO: unset this?
-# Rabbitmq isn't always started when we run this. Wait for it to start.
-# TODO: develop this a bit more -- not 100% that this does what we want.
-while :;
-do
-    grep "Starting broker... completed" /var/snap/microstack/common/log/rabbitmq/startup_log && break
-    echo "waiting for rabbitmq to start" && sleep 1;
-done
-
-rabbitmqctl add_user openstack rabbitmq || true
-rabbitmqctl set_permissions openstack ".*" ".*" ".*"
-
 # Keystone
-echo "keystone setup"
+echo "Configuring Keystone"
 
 snap-openstack keystone-manage fernet_setup --keystone-user root --keystone-group root
 snap-openstack keystone-manage db_sync
@@ -51,7 +22,7 @@ openstack project show service || {
 }
 
 # Nova
-echo "nova setup"
+echo "Configuring Nova"
 
 openstack user show nova || {
     openstack user create --domain default --password nova nova
@@ -115,7 +86,7 @@ openstack flavor show m1.xlarge || {
 }
 
 # Neutron
-echo "neutron setup"
+echo "Configuring Neutron"
 
 openstack user show neutron || {
     openstack user create --domain default --password neutron neutron
@@ -148,8 +119,25 @@ openstack subnet show test-subnet || {
     openstack subnet create --network test --subnet-range 192.168.222.0/24 test-subnet
 }
 
+openstack network show external || {
+    openstack network create --external \
+        --provider-physical-network=physnet1 \
+        --provider-network-type=flat external
+}
+
+openstack subnet show external-subnet || {
+    openstack subnet create --network external --subnet-range 10.20.20.0/24 \
+        --no-dhcp external-subnet
+}
+
+openstack router show test-router || {
+    openstack router create test-router
+    openstack router add subnet test-router test-subnet
+    openstack router set --external-gateway external test-router
+}
+
 # Glance
-echo "glance setup"
+echo "Configuring Glance"
 
 openstack user show glance || {
     openstack user create --domain default --password glance glance
@@ -174,12 +162,10 @@ sleep 5
 
 openstack image show cirros || {
     [ -f $HOME/images/cirros-0.3.5-x86_64-disk.img ] || {
-        export http_proxy=$SNAPSTACK_HTTP_PROXY
         mkdir -p $HOME/images
         wget \
           http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img \
           -O ${HOME}/images/cirros-0.3.5-x86_64-disk.img
-        unset http_proxy
     }
     openstack image create --file ${HOME}/images/cirros-0.3.5-x86_64-disk.img \
         --public --container-format=bare --disk-format=qcow2 cirros
