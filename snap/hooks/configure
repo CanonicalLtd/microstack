@@ -9,6 +9,11 @@ done
 
 # Create all of the databases
 echo "Creating OpenStack Databases"
+
+# Wait for MySQL to startup
+while ! nc -z localhost 3306; do sleep 0.1; done;
+sleep 5
+
 for db in neutron nova nova_api nova_cell0 cinder glance keystone; do
     echo "CREATE DATABASE IF NOT EXISTS ${db}; GRANT ALL PRIVILEGES ON ${db}.* TO '${db}'@'localhost' IDENTIFIED BY '${db}';" \
         | mysql-start-client -u root
