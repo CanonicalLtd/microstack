@@ -1,12 +1,5 @@
 #!/bin/bash -e
 
-# Install conf.d configuration from snap for db etc
-echo "Installing configuration for OpenStack Services"
-for project in neutron nova keystone glance; do
-    mkdir -p ${SNAP_COMMON}/etc/${project}/${project}.conf.d
-    cp -r ${SNAP}/etc/${project}/${project}.conf.d/* ${SNAP_COMMON}/etc/${project}/${project}.conf.d
-done
-
 # Create all of the databases
 echo "Creating OpenStack Databases"
 
