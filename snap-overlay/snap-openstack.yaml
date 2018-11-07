@@ -11,6 +11,7 @@ setup:
     - "{snap_common}/etc/nginx/snap/sites-enabled"
     - "{snap_common}/etc/glance/glance.conf.d"
     - "{snap_common}/etc/horizon/horizon.conf.d"
+    - "{snap_common}/var/horizon/static"
     - "{snap_common}/etc/keystone/uwsgi/snap"
     - "{snap_common}/etc/cinder/uwsgi/snap"
     - "{snap_common}/etc/nova/uwsgi/snap"
@@ -293,12 +294,8 @@ entry_points:
     uwsgi-dir: "{snap_common}/etc/horizon/uwsgi/snap"
     uwsgi-dir-override: "{snap_common}/etc/horizon/uwsgi"
     uwsgi-log: "{snap_common}/log/horizon-uwsgi.log"
-    config-files:
-      - "{snap}/etc/horizon/horizon.conf"
-    config-files-override:
-      - "{snap_common}/etc/horizon/horizon.conf"
     config-dirs:
       - "{snap_common}/etc/horizon/horizon.conf.d"
-    log-file: "{snap_common}/log/horizon.log"
+    log-file: "{snap_common}/log/horizon-api.log"
     templates:
-      horizon.ini.j2: "{snap_common}/etc/horizon/uwsgi/snap/horizon.ini"
+      horizon.ini.j2: "{snap_common}/etc/horizon/uwsgi/snap/horizon.ini"      
