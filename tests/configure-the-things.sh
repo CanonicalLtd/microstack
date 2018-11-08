@@ -29,7 +29,7 @@ microstack.openstack user show admin || {
         --bootstrap-admin-url http://localhost:5000/v3/ \
         --bootstrap-internal-url http://localhost:5000/v3/ \
         --bootstrap-public-url http://localhost:5000/v3/ \
-        --bootstrap-region-id RegionOne
+        --bootstrap-region-id microstack
 }
 
 microstack.openstack project show service || {
