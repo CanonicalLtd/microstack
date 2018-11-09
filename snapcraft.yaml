@@ -573,8 +573,7 @@ parts:
       - librbd-dev
       - libsasl2-dev
       - libsdl1.2-dev
-      - libspice-server-dev
-      - libspice-protocol-dev
+      - try: [libspice-server-dev, libspice-protocol-dev]
       - libusb-1.0-0-dev
       - libusbredirparser-dev
       - linux-libc-dev
