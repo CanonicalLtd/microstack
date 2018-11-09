@@ -437,7 +437,7 @@ parts:
     plugin: autotools
     build-packages:
       - libssl-dev
-      - libnuma-dev
+      - try: [libnuma-dev]
       - libcap-ng-dev
       - libpcap-dev
       - libunbound-dev
