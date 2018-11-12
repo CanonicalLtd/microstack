@@ -638,7 +638,7 @@ parts:
     - wget
     - dpkg-dev
     stage-packages:
-    - dmidecode
+    - try: [dmidecode]
     - dnsmasq
     - dnsmasq-utils
     - ebtables
