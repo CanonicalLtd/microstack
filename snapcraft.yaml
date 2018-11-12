@@ -521,6 +521,7 @@ parts:
       - ipxe-qemu
       - try:
         - libnuma1
+        - libspice-server1
       - libasound2
       - libasyncns0
       - libbluetooth3
@@ -543,7 +544,6 @@ parts:
       - librbd1
       - libsdl1.2debian
       - libsndfile1
-      - libspice-server1
       - libusb-1.0-0
       - libusbredirparser1
       - libvorbis0a
