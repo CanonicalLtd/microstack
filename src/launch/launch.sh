@@ -40,7 +40,7 @@ while :; do
     if [[ $(microstack.openstack server list | grep $SERVER | grep ACTIVE) ]]; then
         echo "Launch complete!"
         microstack.openstack server list
-        echo "Access your server with 'ssh -i $HOME/.ssh/id_microstack $ALLOCATED_FIP'"
+        echo "Access your server with 'ssh -i $HOME/.ssh/id_microstack cirros@$ALLOCATED_FIP'"
         break
     fi
     if [[ $(microstack.openstack server list | grep $SERVER | grep ERROR) ]]; then
