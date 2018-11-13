@@ -1,32 +1,32 @@
-# openstack
+# microstack
 
-[![Snap Status](https://build.snapcraft.io/badge/CanonicalLtd/openstack.svg)](https://build.snapcraft.io/user/CanonicalLtd/openstack)
+[![Snap Status](https://build.snapcraft.io/badge/CanonicalLtd/microstack.svg)](https://build.snapcraft.io/user/CanonicalLtd/microstack)
 
 OpenStack in a snap that you can run locally on a single machine!
 
-`openstack` currently provides Nova, Keystone, Glance, Horizon and Neutron OpenStack services.
+`microstack` currently provides Nova, Keystone, Glance, Horizon and Neutron OpenStack services.
 
 ## Installation
 
-`openstack` is frequently updated to provide the latest stable updates of the most recent OpenStack release.  The quickest was to get started is to install directly from the snap store.  You can install `openstack` using:
+`microstack` is frequently updated to provide the latest stable updates of the most recent OpenStack release.  The quickest was to get started is to install directly from the snap store.  You can install `microstack` using:
 
 ```
-sudo snap install openstack --classic --edge
+sudo snap install microstack --classic --edge
 ```
 
 
 ## Accessing OpenStack
 
-`openstack` provides a pre-configured OpenStack CLI to access the local OpenStack deployment; its namespaced using the `openstack` prefix:
+`microstack` provides a pre-configured OpenStack CLI to access the local OpenStack deployment; its namespaced using the `microstack` prefix:
 
 ```
-openstack.openstack server list
+microstack.openstack server list
 ```
 
-You can setup this command as an alias for `openstack` if you wish (removing the need for the `openstack.` prefix):
+You can setup this command as an alias for `openstack` if you wish (removing the need for the `microstack.` prefix):
 
 ```
-sudo snap alias openstack.openstack openstack
+sudo snap alias microstack.openstack openstack
 ```
 
 Alternatively you can access the Horizon OpenStack dashboard on `http://127.0.0.1` with the following credentials:
@@ -38,25 +38,25 @@ password: keystone
 
 ## Booting and accessing an instance
 
-`openstack` comes preconfigured with networking and images so you can get starting using OpenStack as soon as `openstack` is installed; to boot an instance:
+`microstack` comes preconfigured with networking and images so you can get starting using OpenStack as soon as `microstack` is installed; to boot an instance:
 
 ```
-openstack.openstack server create --flavor m1.small --nic net-id=test --image cirros my-openstack-server
+microstack.openstack server create --flavor m1.small --nic net-id=test --image cirros my-microstack-server
 ```
 
 To access the instance, you'll need to assign it a floating IP address:
 
 ```
-ALLOCATED_FIP=`openstack.openstack floating ip create -f value -c floating_ip_address external`
-openstack.openstack server add floating ip my-openstack-server $ALLOCATED_FIP
+ALLOCATED_FIP=`microstack.openstack floating ip create -f value -c floating_ip_address external`
+microstack.openstack server add floating ip my-microstack-server $ALLOCATED_FIP
 ```
 
-and as you would expect, `openstack` is just like a full OpenStack Cloud and does not allow ingress access to the instance by default, so next enable SSH and ping access to the instance:
+and as you would expect, `microstack` is just like a full OpenStack Cloud and does not allow ingress access to the instance by default, so next enable SSH and ping access to the instance:
 
 ```
-SECGROUP_ID=`openstack.openstack security group list --project admin -f value -c ID`
-openstack.openstack security group rule create $SECGROUP_ID --proto tcp --remote-ip 0.0.0.0/0 --dst-port 22
-openstack.openstack security group rule create $SECGROUP_ID --proto icmp --remote-ip 0.0.0.0/0
+SECGROUP_ID=`microstack.openstack security group list --project admin -f value -c ID`
+microstack.openstack security group rule create $SECGROUP_ID --proto tcp --remote-ip 0.0.0.0/0 --dst-port 22
+microstack.openstack security group rule create $SECGROUP_ID --proto icmp --remote-ip 0.0.0.0/0
 ```
 
 once this is complete you should be able to SSH to the instance:
@@ -65,20 +65,20 @@ once this is complete you should be able to SSH to the instance:
 ssh cirros@$ALLOCATED_FIP
 ```
 
-Happy `openstack`ing!
+Happy `microstack`ing!
 
-## Stopping and starting openstack
+## Stopping and starting microstack
 
-You may wish to temporarily shutdown openstack when not in use without un-installing it.
+You may wish to temporarily shutdown microstack when not in use without un-installing it.
 
-`openstack` can be shutdown using:
+`microstack` can be shutdown using:
 
 ```
-sudo snap disable openstack
+sudo snap disable microstack
 ```
 
 and re-enabled latest using:
 
 ```
-sudo snap enable openstack
+sudo snap enable microstack
 ```
