@@ -4,7 +4,7 @@ summary: OpenStack on your laptop.
 description: |
   Microstack gives you an easy way to develop and test OpenStack
   workloads on your laptop.
-grade: devel
+grade: stable
 confinement: classic
 environment:
   LD_LIBRARY_PATH: $SNAP/lib:$SNAP/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
