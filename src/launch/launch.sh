@@ -16,13 +16,6 @@ if [[ ! $(microstack.openstack keypair list | grep "| microstack |") ]]; then
     microstack.openstack keypair create microstack >> $HOME/.ssh/id_microstack
 fi
 
-echo "Launching instance ..."
-microstack.openstack server create --flavor m1.tiny --image cirros --nic net-id=test --key-name microstack $SERVER
-
-echo "Allocating floating ip ..."
-ALLOCATED_FIP=`microstack.openstack floating ip create -f value -c floating_ip_address external`
-microstack.openstack server add floating ip $SERVER $ALLOCATED_FIP
-
 echo "Checking security groups ..."
 SECGROUP_ID=`microstack.openstack security group list --project admin -f value -c ID`
 if [[ ! $(microstack.openstack security group rule list | grep icmp | grep $SECGROUP_ID) ]]; then
@@ -34,6 +27,13 @@ if [[ ! $(microstack.openstack security group rule list | grep tcp | grep $SECGR
     echo "Creating security group rule for ssh."
     microstack.openstack security group rule create $SECGROUP_ID --proto tcp --dst-port 22
 fi
+
+echo "Launching instance ..."
+microstack.openstack server create --flavor m1.tiny --image cirros --nic net-id=test --key-name microstack $SERVER
+
+echo "Allocating floating ip ..."
+ALLOCATED_FIP=`microstack.openstack floating ip create -f value -c floating_ip_address external`
+microstack.openstack server add floating ip $SERVER $ALLOCATED_FIP
 
 echo "Waiting for server to launch."
 while :; do
