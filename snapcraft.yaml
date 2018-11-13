@@ -761,8 +761,17 @@ parts:
       - libnftnl-dev
     configflags:
       - --disable-nftables
+      - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current
     install: |
-      cp --remove-destination $SNAPCRAFT_PART_INSTALL/sbin/xtables-multi $SNAPCRAFT_PART_INSTALL/bin/iptables-xml
+      cp --remove-destination $SNAPCRAFT_PART_INSTALL/snap/$SNAPCRAFT_PROJECT_NAME/current/sbin/xtables-multi \
+        $SNAPCRAFT_PART_INSTALL/snap/$SNAPCRAFT_PROJECT_NAME/current/bin/iptables-xml
+    organize:
+      # Hack to shift installed iptables back to root of snap
+      # required to ensure that pathing to files etc works at
+      # runtime
+      # * is not used to avoid directory merge conflicts
+      snap/microstack/current/: ./
+
   ipset:
     source: http://ipset.netfilter.org/ipset-6.30.tar.bz2
     plugin: autotools
