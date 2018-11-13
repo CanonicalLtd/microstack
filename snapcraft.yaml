@@ -295,6 +295,11 @@ apps:
 #    plugs:
 #      - network-bind
 
+  launch:
+    command: bin/launch.sh
+#    plugs:
+#      - network
+
 parts:
   # OpenStack Python Projects, keyed off Keystone
   openstack-projects:
@@ -766,6 +771,12 @@ parts:
       - libmnl-dev
     configflags:
       - "--with-kmod=no"
+
+  launch:
+    plugin: dump
+    source: src/launch
+    organize:
+      launch.sh: bin/launch.sh
 
   # Openstack Shared Parts
   overlay:
