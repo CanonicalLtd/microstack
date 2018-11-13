@@ -14,7 +14,11 @@ if [[ ! $(microstack.openstack keypair list | grep "| microstack |") ]]; then
     mkdir -p $HOME/.ssh
     chmod 700 $HOME/.ssh
     microstack.openstack keypair create microstack >> $HOME/.ssh/id_microstack
+    chmod 600 $HOME/.ssh/id_microstack
 fi
+
+echo "Launching instance ..."
+microstack.openstack server create --flavor m1.tiny --image cirros --nic net-id=test --key-name microstack $SERVER
 
 echo "Checking security groups ..."
 SECGROUP_ID=`microstack.openstack security group list --project admin -f value -c ID`
@@ -28,17 +32,13 @@ if [[ ! $(microstack.openstack security group rule list | grep tcp | grep $SECGR
     microstack.openstack security group rule create $SECGROUP_ID --proto tcp --dst-port 22
 fi
 
-echo "Launching instance ..."
-microstack.openstack server create --flavor m1.tiny --image cirros --nic net-id=test --key-name microstack $SERVER
-
 echo "Allocating floating ip ..."
 ALLOCATED_FIP=`microstack.openstack floating ip create -f value -c floating_ip_address external`
 microstack.openstack server add floating ip $SERVER $ALLOCATED_FIP
 
-echo "Waiting for server to launch."
+echo "Waiting for server to become ACTIVE."
 while :; do
     if [[ $(microstack.openstack server list | grep $SERVER | grep ACTIVE) ]]; then
-        echo "Launch complete!"
         microstack.openstack server list
         echo "Access your server with 'ssh -i $HOME/.ssh/id_microstack cirros@$ALLOCATED_FIP'"
         break
