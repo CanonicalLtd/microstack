@@ -1,4 +1,4 @@
-name: microstack
+name: openstack
 version: rocky
 summary: OpenStack on your laptop.
 description: |
@@ -611,7 +611,7 @@ parts:
       # required to ensure that pathing to files etc works at
       # runtime
       # * is not used to avoid directory merge conflicts
-      snap/microstack/current/: ./
+      snap/openstack/current/: ./
 
   kvm-support:
     plugin: nil
@@ -689,7 +689,7 @@ parts:
       # required to ensure that pathing to files etc works at
       # runtime
       # * is not used to avoid directory merge conflicts
-      snap/microstack/current/: ./
+      snap/openstack/current/: ./
 
   # MySQL
   mysql-server:
@@ -770,7 +770,7 @@ parts:
       # required to ensure that pathing to files etc works at
       # runtime
       # * is not used to avoid directory merge conflicts
-      snap/microstack/current/: ./
+      snap/openstack/current/: ./
 
   ipset:
     source: http://ipset.netfilter.org/ipset-6.30.tar.bz2
