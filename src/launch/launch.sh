@@ -9,42 +9,42 @@ else
     SERVER=$1
 fi
 
-if [[ ! $(microstack.openstack keypair list | grep "| microstack |") ]]; then
+if [[ ! $(openstack keypair list | grep "| microstack |") ]]; then
     echo "creating keypair ($HOME/.ssh/id_microstack)"
     mkdir -p $HOME/.ssh
     chmod 700 $HOME/.ssh
-    microstack.openstack keypair create microstack >> $HOME/.ssh/id_microstack
+    openstack keypair create microstack >> $HOME/.ssh/id_microstack
     chmod 600 $HOME/.ssh/id_microstack
 fi
 
 echo "Launching instance ..."
-microstack.openstack server create --flavor m1.tiny --image cirros --nic net-id=test --key-name microstack $SERVER
+openstack server create --flavor m1.tiny --image cirros --nic net-id=test --key-name microstack $SERVER
 
 echo "Checking security groups ..."
-SECGROUP_ID=`microstack.openstack security group list --project admin -f value -c ID`
-if [[ ! $(microstack.openstack security group rule list | grep icmp | grep $SECGROUP_ID) ]]; then
+SECGROUP_ID=`openstack security group list --project admin -f value -c ID`
+if [[ ! $(openstack security group rule list | grep icmp | grep $SECGROUP_ID) ]]; then
     echo "Creating security group rule for ping."
-    microstack.openstack security group rule create $SECGROUP_ID --proto icmp
+    openstack security group rule create $SECGROUP_ID --proto icmp
 fi
 
-if [[ ! $(microstack.openstack security group rule list | grep tcp | grep $SECGROUP_ID) ]]; then
+if [[ ! $(openstack security group rule list | grep tcp | grep $SECGROUP_ID) ]]; then
     echo "Creating security group rule for ssh."
-    microstack.openstack security group rule create $SECGROUP_ID --proto tcp --dst-port 22
+    openstack security group rule create $SECGROUP_ID --proto tcp --dst-port 22
 fi
 
 echo "Allocating floating ip ..."
-ALLOCATED_FIP=`microstack.openstack floating ip create -f value -c floating_ip_address external`
-microstack.openstack server add floating ip $SERVER $ALLOCATED_FIP
+ALLOCATED_FIP=`openstack floating ip create -f value -c floating_ip_address external`
+openstack server add floating ip $SERVER $ALLOCATED_FIP
 
 echo "Waiting for server to become ACTIVE."
 while :; do
-    if [[ $(microstack.openstack server list | grep $SERVER | grep ACTIVE) ]]; then
-        microstack.openstack server list
+    if [[ $(openstack server list | grep $SERVER | grep ACTIVE) ]]; then
+        openstack server list
         echo "Access your server with 'ssh -i $HOME/.ssh/id_microstack cirros@$ALLOCATED_FIP'"
         break
     fi
-    if [[ $(microstack.openstack server list | grep $SERVER | grep ERROR) ]]; then
-        microstack.openstack server list
+    if [[ $(openstack server list | grep $SERVER | grep ERROR) ]]; then
+        openstack server list
         echo "Uh-oh. There was an error. See /var/snap/microstack/common/logs for details."
         break
     fi
