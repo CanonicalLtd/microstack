@@ -7,6 +7,9 @@ echo "Creating OpenStack Databases"
 while ! nc -z localhost 3306; do sleep 0.1; done;
 sleep 5
 
+# Wait for rabbitmq to start
+while ! nc -z localhost 5672; do sleep 0.1; done;
+
 for db in neutron nova nova_api nova_cell0 cinder glance keystone; do
     echo "CREATE DATABASE IF NOT EXISTS ${db}; GRANT ALL PRIVILEGES ON ${db}.* TO '${db}'@'localhost' IDENTIFIED BY '${db}';" \
         | mysql-start-client -u root
@@ -41,6 +44,9 @@ while ! nc -z localhost 9292; do sleep 0.1; done;
 
 sleep 5
 
+# Wait for identity service
+while ! nc -z localhost 5000; do sleep 0.1; done;
+
 openstack image show cirros || {
     [ -f $HOME/images/cirros-0.3.5-x86_64-disk.img ] || {
         mkdir -p $HOME/images
@@ -51,3 +57,6 @@ openstack image show cirros || {
     openstack image create --file ${HOME}/images/cirros-0.3.5-x86_64-disk.img \
         --public --container-format=bare --disk-format=qcow2 cirros
 }
+
+# Wait for horizon
+while ! nc -z localhost 80; do sleep 0.1; done;
