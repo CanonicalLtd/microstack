@@ -34,10 +34,10 @@ fi
 
 TRIES=0
 while [[ $(openstack server list | grep $SERVER | grep ERROR) ]]; do
+    TRIES=$(($TRIES + 1))
     if test $TRIES -gt 3; then
         break
     fi
-    TRIES=$(($TRIES + 1))
     echo "I ran into an issue launching an instance. Retrying ... (try $TRIES of 3)"
     openstack server delete $SERVER
     openstack server create --flavor m1.tiny --image cirros --nic net-id=test --key-name microstack $SERVER
