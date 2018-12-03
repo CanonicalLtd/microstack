@@ -89,7 +89,7 @@ apps:
 
   # Neutron
   neutron-api:
-    command: snap-openstack neutron-server
+    command: neutron-server-wrapper
     daemon: simple
 #    plugs:
 #      - network-bind
@@ -346,6 +346,14 @@ parts:
       # This is the last step, let's now compile all our pyc files.
       # Ignore errors due to syntax issues in foobar python 2.
       ./usr/bin/python2.7 -m compileall . || true
+
+  neutron-wrapper:
+    source: ./snap-wrappers/neutron
+    plugin: dump
+    after:
+      - openstack-projects
+    organize:
+      neutron-server-wrapper: bin/neutron-server-wrapper
 
   keystone-config:
     after: [openstack-projects]
