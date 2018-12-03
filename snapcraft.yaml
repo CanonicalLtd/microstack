@@ -177,6 +177,8 @@ apps:
   ovs-vswitchd:
     command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server --no-monitor --system-id=random start
     stop-command: ovs-wrapper $SNAP/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server stop
+    passthrough:
+      after: [ovsdb-server]
     daemon: forking
 #    plugs:
 #      - network
@@ -602,8 +604,8 @@ parts:
       - --target-list=x86_64-softmmu
     override-build: |
       wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg.orig.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.32.debian.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.32.dsc
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.33.debian.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.33.dsc
       dpkg-source -x qemu_*.dsc
       snapcraftctl build
     organize:
