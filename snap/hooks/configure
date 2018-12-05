@@ -30,16 +30,8 @@ done
 HOME=$SNAP_COMMON/lib/rabbitmq rabbitmqctl add_user openstack rabbitmq || :
 HOME=$SNAP_COMMON/lib/rabbitmq rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 
-# Open vSwitch/Neutron
-echo "Configuring Open vSwitch networking"
-
-# Create external integration bridge
-ovs-vsctl --retry --may-exist add-br br-ex
-
-# Configure br-ex
-ip address add 10.20.20.1/24 dev br-ex || :
-ip link set br-ex up || :
-
+# Glance
+echo "Waiting for glance to start."
 while ! nc -z localhost 9292; do sleep 0.1; done;
 
 sleep 5
