@@ -215,6 +215,14 @@ apps:
 #    plugs:
 #      - network
 
+  external-bridge:
+    command: bin/setup-br-ex
+    daemon: oneshot
+    passthrough:
+      after: [ovs-vswitchd]
+#    plugs:
+#      - network
+
   # Libvirt/Qemu
   libvirtd:
     command: libvirtd
