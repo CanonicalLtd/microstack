@@ -11,9 +11,28 @@ OpenStack in a snap that you can run locally on a single machine!
 `microstack` is frequently updated to provide the latest stable updates of the most recent OpenStack release.  The quickest was to get started is to install directly from the snap store.  You can install `microstack` using:
 
 ```
-sudo snap install microstack --classic --edge
+sudo snap install microstack --classic --candidate
 ```
 
+## Quickstart
+To quickly configure networks and launch a vm, run `microstack.launch`.
+
+This will launch an instance for you, and make it available to manage via the command line, or via the Horizon Dashboard.
+
+To access the Dashboard, visit http://localhost in a web browser, and login with the following credentials:
+
+```
+username: admin
+password: keystone
+```
+
+To ssh into the instance, use the username "cirros" and the ssh key written to ~/.ssh/id_microstack:
+
+`ssh -i ~/.ssh/id_microstack cirros@<IP>` (Where 'IP' is listed in the output of `microstack.launch`)
+
+To run openstack commands, run `microstack.openstack <some command>`
+
+For more detail and control, read the rest of this README. :-)
 
 ## Accessing OpenStack
 
