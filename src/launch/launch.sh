@@ -13,7 +13,7 @@ if [[ ! $(openstack keypair list | grep "| microstack |") ]]; then
     echo "creating keypair ($HOME/.ssh/id_microstack)"
     mkdir -p $HOME/.ssh
     chmod 700 $HOME/.ssh
-    openstack keypair create microstack >> $HOME/.ssh/id_microstack
+    openstack keypair create microstack > $HOME/.ssh/id_microstack
     chmod 600 $HOME/.ssh/id_microstack
 fi
 
