@@ -101,3 +101,7 @@ and re-enabled latest using:
 ```
 sudo snap enable microstack
 ```
+
+## Raising a Bug
+
+Please report bugs to the microstack project on launchpad: https://bugs.launchpad.net/microstack
