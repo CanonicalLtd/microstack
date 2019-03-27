@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+# Open up networking so that instances can route to the Internet (see
+# bin/setup-br-ex for more networking setup, executed on microstack
+# services start.)
+sudo sysctl net.ipv4.ip_forward=1
+
 # Create all of the databases
 echo "Creating OpenStack Databases"
 
