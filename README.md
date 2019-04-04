@@ -19,7 +19,7 @@ To quickly configure networks and launch a vm, run `microstack.launch`.
 
 This will launch an instance for you, and make it available to manage via the command line, or via the Horizon Dashboard.
 
-To access the Dashboard, visit http://localhost in a web browser, and login with the following credentials:
+To access the Dashboard, visit http://10.20.20.1 in a web browser, and login with the following credentials:
 
 ```
 username: admin

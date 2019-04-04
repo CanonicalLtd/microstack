@@ -9,19 +9,19 @@ sudo sysctl net.ipv4.ip_forward=1
 echo "Creating OpenStack Databases"
 
 # Wait for MySQL to startup
-while ! nc -z localhost 3306; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 3306; do sleep 0.1; done;
 sleep 5
 
 # Wait for rabbitmq to start
-while ! nc -z localhost 5672; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 5672; do sleep 0.1; done;
 
 for db in neutron nova nova_api nova_cell0 cinder glance keystone; do
-    echo "CREATE DATABASE IF NOT EXISTS ${db}; GRANT ALL PRIVILEGES ON ${db}.* TO '${db}'@'localhost' IDENTIFIED BY '${db}';" \
+    echo "CREATE DATABASE IF NOT EXISTS ${db}; GRANT ALL PRIVILEGES ON ${db}.* TO '${db}'@'10.20.20.1' IDENTIFIED BY '${db}';" \
         | mysql-start-client -u root
 done
 
 # Grant nova user access to cell0
-echo "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';" | mysql-start-client -u root
+echo "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'10.20.20.1' IDENTIFIED BY 'nova';" | mysql-start-client -u root
 
 # RabbitMQ
 echo "Configuring RabbitMQ"
@@ -37,12 +37,12 @@ HOME=$SNAP_COMMON/lib/rabbitmq rabbitmqctl set_permissions openstack ".*" ".*" "
 
 # Glance
 echo "Waiting for glance to start."
-while ! nc -z localhost 9292; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 9292; do sleep 0.1; done;
 
 sleep 5
 
 # Wait for identity service
-while ! nc -z localhost 5000; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 5000; do sleep 0.1; done;
 
 openstack image show cirros || {
     [ -f $HOME/images/cirros-0.3.5-x86_64-disk.img ] || {
@@ -56,4 +56,4 @@ openstack image show cirros || {
 }
 
 # Wait for horizon
-while ! nc -z localhost 80; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 80; do sleep 0.1; done;
