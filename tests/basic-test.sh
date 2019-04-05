@@ -29,18 +29,23 @@ MAX_PINGS=20
 until multipass exec $MACHINE -- ping -c 1 $IP &>/dev/null; do
     PINGS=$(($PINGS + 1));
     if test $PINGS -gt $MAX_PINGS; then
-        break
+        echo "Unable to ping machine!";
+        exit 1;
     fi
 done;
 
-# Verify that we can ping the machine, and ping from the machine to
-# canonical.com (91.189.94.250).
-# TODO no longer hard code canonical.com's IP address.
-multipass exec $MACHINE -- ping -c 1 $IP;
-sleep 5; # Sometimes the machine is still not quite ready. TODO better wait.
-multipass exec $MACHINE -- \
+ATTEMPTS=1
+MAX_ATTEMPTS=20
+until multipass exec $MACHINE -- \
           ssh -oStrictHostKeyChecking=no -i .ssh/id_microstack cirros@$IP -- \
-          ping -c 1 91.189.94.250
+          ping -c 1 91.189.94.250; do
+    ATTEMPTS=$(($ATTEMPTS + 1));
+    if test $ATTEMPTS -gt $MAX_ATTEMPTS; then
+        echo "Unable to access Internet from machine!";
+        exit 1;
+    fi
+    sleep 5
+done;
 
 # Cleanup
 unset IP
