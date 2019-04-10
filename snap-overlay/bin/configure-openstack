@@ -11,9 +11,9 @@ systemctl restart snap.microstack.keystone-*
 openstack user show admin || {
     snap-openstack keystone-manage bootstrap \
         --bootstrap-password $OS_PASSWORD \
-        --bootstrap-admin-url http://localhost:5000/v3/ \
-        --bootstrap-internal-url http://localhost:5000/v3/ \
-        --bootstrap-public-url http://localhost:5000/v3/ \
+        --bootstrap-admin-url http://10.20.20.1:5000/v3/ \
+        --bootstrap-internal-url http://10.20.20.1:5000/v3/ \
+        --bootstrap-public-url http://10.20.20.1:5000/v3/ \
         --bootstrap-region-id microstack
 }
 
@@ -40,7 +40,7 @@ openstack service show compute || {
 
     for endpoint in public internal admin; do
         openstack endpoint create --region microstack \
-          compute $endpoint http://localhost:8774/v2.1 || :
+          compute $endpoint http://10.20.20.1:8774/v2.1 || :
     done
 }
 
@@ -50,7 +50,7 @@ openstack service show placement || {
 
     for endpoint in public internal admin; do
         openstack endpoint create --region microstack \
-          placement $endpoint http://localhost:8778 || :
+          placement $endpoint http://10.20.20.1:8778 || :
     done
 }
 
@@ -65,7 +65,7 @@ snap-openstack nova-manage db sync
 
 systemctl restart snap.microstack.nova-*
 
-while ! nc -z localhost 8774; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 8774; do sleep 0.1; done;
 
 sleep 5
 
@@ -99,7 +99,7 @@ openstack service show network || {
 
     for endpoint in public internal admin; do
         openstack endpoint create --region microstack \
-          network $endpoint http://localhost:9696 || :
+          network $endpoint http://10.20.20.1:9696 || :
     done
 }
 
@@ -107,7 +107,7 @@ snap-openstack neutron-db-manage upgrade head
 
 systemctl restart snap.microstack.neutron-*
 
-while ! nc -z localhost 9696; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 9696; do sleep 0.1; done;
 
 sleep 5
 
@@ -148,7 +148,7 @@ openstack service show image || {
     openstack service create --name glance --description "OpenStack Image" image
     for endpoint in internal admin public; do
         openstack endpoint create --region microstack \
-            image $endpoint http://localhost:9292 || :
+            image $endpoint http://10.20.20.1:9292 || :
     done
 }
 
@@ -156,7 +156,7 @@ snap-openstack glance-manage db_sync
 
 systemctl restart snap.microstack.glance*
 
-while ! nc -z localhost 9292; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 9292; do sleep 0.1; done;
 
 sleep 5
 

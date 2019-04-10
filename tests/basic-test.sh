@@ -20,8 +20,23 @@ multipass copy-files microstack_rocky_amd64.snap $MACHINE:
 multipass exec $MACHINE -- \
           sudo snap install --classic --dangerous microstack*.snap
 
-# Run microstack.launch and wait for it to complete.
+# Run microstack.launch
 multipass exec $MACHINE -- /snap/bin/microstack.launch breakfast
+
+# Verify that endpoints are setup correctly
+# List of endpoints should contain 10.20.20.1
+if ! multipass exec $MACHINE -- /snap/bin/microstack.openstack endpoint list | grep "10.20.20.1"; then
+    echo "Endpoints are not set to 10.20.20.1!";
+    exit 1;
+fi
+# List of endpoints should not contain localhost
+if multipass exec $MACHINE -- /snap/bin/microstack.openstack endpoint list | grep "localhost"; then
+    echo "Endpoints are not set to 10.20.20.1!";
+    exit 1;
+fi
+
+
+# Verify that microstack.launch completed
 IP=$(multipass exec $MACHINE -- /snap/bin/microstack.openstack server list | grep breakfast | cut -d" " -f9)
 echo "Waiting for ping..."
 PINGS=1
@@ -29,18 +44,23 @@ MAX_PINGS=20
 until multipass exec $MACHINE -- ping -c 1 $IP &>/dev/null; do
     PINGS=$(($PINGS + 1));
     if test $PINGS -gt $MAX_PINGS; then
-        break
+        echo "Unable to ping machine!";
+        exit 1;
     fi
 done;
 
-# Verify that we can ping the machine, and ping from the machine to
-# canonical.com (91.189.94.250).
-# TODO no longer hard code canonical.com's IP address.
-multipass exec $MACHINE -- ping -c 1 $IP;
-sleep 5; # Sometimes the machine is still not quite ready. TODO better wait.
-multipass exec $MACHINE -- \
+ATTEMPTS=1
+MAX_ATTEMPTS=20
+until multipass exec $MACHINE -- \
           ssh -oStrictHostKeyChecking=no -i .ssh/id_microstack cirros@$IP -- \
-          ping -c 1 91.189.94.250
+          ping -c 1 91.189.94.250; do
+    ATTEMPTS=$(($ATTEMPTS + 1));
+    if test $ATTEMPTS -gt $MAX_ATTEMPTS; then
+        echo "Unable to access Internet from machine!";
+        exit 1;
+    fi
+    sleep 5
+done;
 
 # Cleanup
 unset IP

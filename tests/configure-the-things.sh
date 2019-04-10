@@ -14,9 +14,9 @@ set -ex
 MYSQL_PASSWORD=fnord  # TODO use snapctl
 MYSQL_TMP_PASSWORD=`sudo cat /var/snap/microstack/common/log/error.log | grep "temporary password" | cut -d " " -f11`
 
-echo "ALTER USER 'root'@'localhost' IDENTIFIED BY 'fnord';" | microstack.mysql-client -u root -p"$MYSQL_TMP_PASSWORD" --connect-expired-password
+echo "ALTER USER 'root'@'10.20.20.1' IDENTIFIED BY 'fnord';" | microstack.mysql-client -u root -p"$MYSQL_TMP_PASSWORD" --connect-expired-password
 
-echo "CREATE DATABASE IF NOT EXISTS keystone; GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'keystone';" | sudo microstack.mysql-client -u root -p"$MYSQL_PASSWORD"
+echo "CREATE DATABASE IF NOT EXISTS keystone; GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'10.20.20.1' IDENTIFIED BY 'keystone';" | sudo microstack.mysql-client -u root -p"$MYSQL_PASSWORD"
 
 sudo microstack.keystone-manage fernet_setup --keystone-user root --keystone-group root
 sudo microstack.keystone-manage db_sync
@@ -26,9 +26,9 @@ sudo systemctl restart snap.microstack.*
 microstack.openstack user show admin || {
     sudo microstack.keystone-manage bootstrap \
         --bootstrap-password $OS_PASSWORD \
-        --bootstrap-admin-url http://localhost:5000/v3/ \
-        --bootstrap-internal-url http://localhost:5000/v3/ \
-        --bootstrap-public-url http://localhost:5000/v3/ \
+        --bootstrap-admin-url http://10.20.20.1:5000/v3/ \
+        --bootstrap-internal-url http://10.20.20.1:5000/v3/ \
+        --bootstrap-public-url http://10.20.20.1:5000/v3/ \
         --bootstrap-region-id microstack
 }
 
