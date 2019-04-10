@@ -20,8 +20,23 @@ multipass copy-files microstack_rocky_amd64.snap $MACHINE:
 multipass exec $MACHINE -- \
           sudo snap install --classic --dangerous microstack*.snap
 
-# Run microstack.launch and wait for it to complete.
+# Run microstack.launch
 multipass exec $MACHINE -- /snap/bin/microstack.launch breakfast
+
+# Verify that endpoints are setup correctly
+# List of endpoints should contain 10.20.20.1
+if ! multipass exec $MACHINE -- /snap/bin/microstack.openstack endpoint list | grep "10.20.20.1"; then
+    echo "Endpoints are not set to 10.20.20.1!";
+    exit 1;
+fi
+# List of endpoints should not contain localhost
+if multipass exec $MACHINE -- /snap/bin/microstack.openstack endpoint list | grep "localhost"; then
+    echo "Endpoints are not set to 10.20.20.1!";
+    exit 1;
+fi
+
+
+# Verify that microstack.launch completed
 IP=$(multipass exec $MACHINE -- /snap/bin/microstack.openstack server list | grep breakfast | cut -d" " -f9)
 echo "Waiting for ping..."
 PINGS=1
