@@ -12,7 +12,7 @@ This Demo must be run on a machine with the following specs:
 - 16GB or more of RAM
 - ~ 100G of free hard disk space
 - A quad core or better cpu
-- Cirtualization extensions enabled on the cpu
+- Virtualization extensions enabled on the cpu
 - Ubuntu 16.04 or higher.
 
 Example machines:
@@ -23,7 +23,7 @@ Example machines:
 
 ## Machine Setup
 
-First, you'll need to install some depdencies on your machine.
+First, you'll need to install some dependencies on your machine.
 
 Obviously, we'll need to install microstack. We'll also install the
 juju and kubectl snaps, which will give us tools to deploy and manage
@@ -58,7 +58,7 @@ source /etc/environment
 
 Openstack runs a lot of processes, and opens a lot of network
 connections. You may want to tweak your system networking and
-virtualization defaults to accomodate this:
+virtualization defaults to accommodate this:
 
 ```
 echo fs.inotify.max_queued_events=1048576 | sudo tee -a /etc/sysctl.conf
@@ -112,7 +112,7 @@ microstack.openstack server delete test
 
 The cirros images is great for quickly testing out our cloud's
 functionality, but for this demo, we'll want to add a more full
-featured ubuntu image. Go ahead and downlaod it from the cloud images
+featured ubuntu image. Go ahead and download it from the cloud images
 repository:
 
 
