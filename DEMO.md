@@ -19,7 +19,7 @@ Example machines:
 - A laptop running Ubuntu 19.04, with 32GB of RAM, a 1TB hard drive,
   and a quad core i7 processor.
 - A kvm instance running on the above laptop with 16GB of RAM, Ubuntu
-  18.04 installed, a 100G hard drive, and 4 cpus.
+  18.04 installed, a 120G hard drive, and 4 cpus.
 
 ## Machine Setup
 
