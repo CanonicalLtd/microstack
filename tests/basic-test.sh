@@ -66,6 +66,7 @@ done;
 unset IP
 echo "Completed tests. Tearing down $MACHINE."
 multipass stop $MACHINE
+multipass delete $MACHINE
 multipass purge  # This is a little bit rude to do, but we assume that
                  # we can beat up on the test machine a bit.
 
