@@ -2,6 +2,20 @@
 
 set -ex
 
+# Command line args.
+# Pass -u edge/candidate/stable to install
+# microstack from the matching channel in the snap store before
+# installing the locally built snap. This will help verify that we
+# aren't breaking snaps in the wild with a change.
+UPGRADE_FROM="none"
+while getopts u: option
+do
+    case "${option}"
+    in
+        u) UPGRADE_FROM=${OPTARG};;
+    esac
+done
+
 # Dependencies. TODO: move these into a testing harness
 command -v multipass > /dev/null || (echo "Please install multipass."; exit 1);
 command -v petname > /dev/null || (echo "Please install petname."; exit 1);
@@ -17,6 +31,14 @@ DISTRO=18.04
 # Launch a machine and copy the snap to it.
 multipass launch --cpus 2 --mem 16G $DISTRO --name $MACHINE
 multipass copy-files microstack_rocky_amd64.snap $MACHINE:
+
+# Possibly install a release of the snap before running a test.
+if [ "${UPGRADE_FROM}" != "none" ]; then
+    multipass exec $MACHINE -- sudo snap install --classic \
+              --${UPGRADE_FROM} microstack
+fi
+
+# Install the snap under test
 multipass exec $MACHINE -- \
           sudo snap install --classic --dangerous microstack*.snap
 
