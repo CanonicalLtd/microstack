@@ -30,7 +30,7 @@ juju and kubectl snaps, which will give us tools to deploy and manage
 kubernetes, respectively.
 
 ```
-sudo snap install --classic --edge microstack  # TODO: update to stable once pushed to stable
+sudo snap install --classic --beta microstack
 sudo snap install --classic juju
 sudo snap install --classic kubectl
 ```
@@ -170,8 +170,6 @@ your image id by running `microstack.openstack image list`)
 
 
 ### Setup a juju controller flavor
-
-TODO: figure out how to do this without dropping into the shell
 
 ```
 microstack.openstack flavor create juju-controller --ram 2048 --disk 20 --vcpus 2
