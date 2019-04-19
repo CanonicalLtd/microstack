@@ -1,4 +1,4 @@
-# Microstack Demo (WIP)
+# Microstack Demo
 
 These are instructions for setting up the demo that originally ran at
 the Denver Open Infrastructure Summit in April of 2019. We'll set up a
