@@ -78,12 +78,15 @@ you're in a network restricted environment, or simply want to use a different DN
 sudo vim /var/snap/microstack/common/etc/neutron/dhcp_agent.ini
 ```
 
-Add the following text:
+Add the following text to `dhcp_agent.ini`:
+
+```
 [DEFAULT]
 interface_driver = openvswitch
 dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
 enable_isolated_metadata = True
 dnsmasq_dns_servers = <your dns>
+```
 
 You'll need to restart the microstack services if you've made this change:
 
@@ -138,13 +141,14 @@ Run `juju add-cloud microstack`
 
 Answer the questions as follows:
 
-cloud type: `openstack`<br>
-endpoint: `http://10.20.20.1:5000/v3`<br>
-cert path: `none`<br>
-auth type: `userpass`<br>
-region: `microstack`<br>
-region endpoint: `http://10.20.20.1:5000/v3`<br>
-add another region?: `N`
+<table>
+  <tr><td>cloud type:</td> <td><code>openstack</code></td></tr>
+  <tr><td>endpoint:</td> <td><code>http://10.20.20.1:5000/v3</code></td></tr>
+  <tr><td>cert path:</td> <td><code>none</code></td></tr>
+  <tr><td>region:</td> <td><code>userpass</code></td></tr>
+  <tr><td>region endpoint:</td> <td><code>http://10.20.20.1:5000/v3</code></td></tr>
+  <tr><td>add another region?:</td> <td><code>N</code></td></tr>
+</table>
 
 You'll need to load microstack credentials. You can temporarily drop
 into the microstack snap's shell environment to make this easy.
@@ -165,7 +169,7 @@ mkdir simplestreams
 juju metadata generate-image -d ~/simplestreams -i $IMAGE -s bionic -r microstack -u http://10.20.20.1:5000/v3
 ```
 
-(If you don't still have an IMAGE variable in your env, you can find
+(If you don't still have an `IMAGE` variable in your env, you can find
 your image id by running `microstack.openstack image list`)
 
 
@@ -196,9 +200,9 @@ juju ssh 0 -- tar xvzf simplestreams.tar.gz
 
 ### Make a juju model
 
-Drop the following text into a file called model-config.yaml:
+Drop the following text into a file called `model-config.yaml`:
 
-```
+```yaml
 use-floating-ip: true
 image-metadata-url: /home/ubuntu/simplestreams/images
 network: test
@@ -217,7 +221,7 @@ juju add-model k8s --config model-config.yaml
 
 Drop the following text into a file called bundle.yaml:
 
-```
+```yaml
 description: A minimal two-machine Kubernetes cluster, appropriate for development.
 
 series: bionic
@@ -360,4 +364,4 @@ To clean up, run:
 juju run-action kubernetes-worker/0 microbot delete=true
 ```
 
-For more information, visit https://jujucharms.com/canonical-kubernetes/
+For more information, visit https://jujucharms.com/canonical-kubernetes/ or ask at https://discourse.jujucharms.com/.
