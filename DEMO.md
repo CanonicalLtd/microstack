@@ -172,7 +172,7 @@ your image id by running `microstack.openstack image list`)
 ### Setup a juju controller flavor
 
 ```
-microstack.openstack flavor create juju-controller --ram 2048 --disk 20 --vcpus 2
+microstack.openstack flavor create juju-controller --ram 2048 --disk 20 --vcpus 1
 ```
 
 ### Run Juju Bootstrap scripts
