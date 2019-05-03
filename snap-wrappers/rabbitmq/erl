@@ -19,7 +19,7 @@
 # %CopyrightEnd%
 #
 ROOTDIR=$SNAP/usr/lib/erlang
-BINDIR=$ROOTDIR/erts-7.3/bin
+BINDIR=$ROOTDIR/erts-9.2/bin
 EMU=beam
 PROGNAME=`echo $0 | sed 's/.*\///'`
 export EMU
