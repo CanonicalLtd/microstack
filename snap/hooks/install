@@ -1,9 +1,7 @@
 #!/bin/sh
 set -e
 
-install -D $SNAP/var/snap/microstack/common/libvirt/libvirtd.conf $SNAP_COMMON/libvirt/libvirtd.conf
-sed -i 's/unix_sock_group = "libvirtd"/unix_sock_group = "sudo"/' $SNAP_COMMON/libvirt/libvirtd.conf
-
+# No config branch -- don't run this!
 # MySQL snapshot for speedy install
 # snapshot is a mysql data dir with
 # rocky keystone,nova,glance,neutron dbs.
@@ -17,5 +15,6 @@ for project in neutron nova keystone glance; do
     cp -r ${SNAP}/etc/${project}/${project}.conf.d/* ${SNAP_COMMON}/etc/${project}/${project}.conf.d
 done
 
+# No config branch -- don't run this!
 # Configure Keystone Fernet Keys
 snap-openstack keystone-manage fernet_setup --keystone-user root --keystone-group root
