@@ -580,7 +580,6 @@ parts:
         - --disable-user
         - --disable-linux-user
         - --enable-system
-
     organize:
       # Hack to shift installed qemu back to root of snap
       # required to ensure that pathing to files etc works at
