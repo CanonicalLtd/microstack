@@ -42,9 +42,6 @@ fi
 multipass exec $MACHINE -- \
           sudo snap install --classic --dangerous microstack*.snap
 
-# Run configure script!
-#multipass exec $MACHINE -- sudo microstack.configure
-
 # Run microstack.launch
 multipass exec $MACHINE -- /snap/bin/microstack.launch breakfast
 
