@@ -8,11 +8,14 @@ set -ex
 # installing the locally built snap. This will help verify that we
 # aren't breaking snaps in the wild with a change.
 UPGRADE_FROM="none"
-while getopts u: option
+DISTRO=18.04
+
+while getopts u:d: option
 do
     case "${option}"
     in
         u) UPGRADE_FROM=${OPTARG};;
+        d) DISTRO=${OPTARG};;
     esac
 done
 
@@ -25,8 +28,7 @@ if [ ! -f microstack_rocky_amd64.snap ]; then
    exit 1
 fi
 
-MACHINE=$(petname)
-DISTRO=18.04
+MACHINE=$(petname);
 
 # Launch a machine and copy the snap to it.
 multipass launch --cpus 2 --mem 16G $DISTRO --name $MACHINE
