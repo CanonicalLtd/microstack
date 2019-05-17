@@ -8,7 +8,12 @@ description: |
 grade: stable
 confinement: classic
 environment:
-  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
+  # Gather to gether core18 lib paths, so that we can append it to
+  # LD_LIBRARY_PATH below. If we don't do this, I believe that we
+  # clobber access to the core libs, and run into trouble w/ the snap
+  # reaching outside core to get stuff.
+  CORE18_LIB_PATH: /snap/core18/current/lib:/snap/core18/current/lib/$SNAPCRAFT_ARCH_TRIPLET:/snap/core18/current/usr/lib:/snap/core18/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
+  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$CORE18_LIB_PATH
   PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
   LC_ALL: C
   OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
