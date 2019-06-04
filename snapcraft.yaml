@@ -1,5 +1,6 @@
 name: microstack
 version: rocky
+base: core18
 summary: OpenStack on your laptop.
 description: |
   Microstack gives you an easy way to develop and test OpenStack
@@ -229,6 +230,9 @@ apps:
     daemon: simple
     environment:
       LD_LIBRARY_PATH: $SNAP/lib:$SNAP/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio
+  virtlogd:
+    command: virtlogd
+    daemon: simple
   virsh:
     command: virsh
 
@@ -315,7 +319,8 @@ parts:
   openstack-projects:
     plugin: python
     python-version: python2
-    constraints: https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
+    constraints:
+      - https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
     source: http://tarballs.openstack.org/keystone/keystone-stable-rocky.tar.gz
     python-packages:
       - libvirt-python
@@ -333,6 +338,7 @@ parts:
       - python-swiftclient
     build-packages:
       - gcc
+      - git
       - libffi-dev
       - libssl-dev
       - libxml2-dev
@@ -342,10 +348,7 @@ parts:
       - conntrack
       - coreutils
       - haproxy
-    override-build: |
-      # Ensure libvirt is discovered from previous built part
-      export PKG_CONFIG_PATH=$SNAPCRAFT_STAGE/lib/pkgconfig
-      snapcraftctl build
+      - libpython2.7
     override-prime: |
       snapcraftctl prime
       # Now that everything is built, let's disable user site-packages
@@ -448,7 +451,7 @@ parts:
 
   openvswitch:
     # TODO: figure out a better way to fetch the version
-    source: http://openvswitch.org/releases/openvswitch-2.10.1.tar.gz
+    source: http://openvswitch.org/releases/openvswitch-2.10.2.tar.gz
     plugin: autotools
     build-packages:
       - libssl-dev
@@ -522,106 +525,22 @@ parts:
       done
       snapcraftctl build
 
-  libxml2:
-    source: http://xmlsoft.org/sources/libxml2-2.9.4.tar.gz
-    plugin: autotools
-
   # libvirt/qemu
   qemu:
-    source: .
-    source-subdir: qemu-2.5+dfsg
-    plugin: autotools
+    plugin: nil
     stage-packages:
-      - seabios
-      - ipxe-qemu
-      - try:
-        - libnuma1
-        - libspice-server1
-      - libasound2
-      - libasyncns0
-      - libbluetooth3
-      - libboost-iostreams1.58.0
-      - libboost-random1.58.0
-      - libboost-system1.58.0
-      - libboost-thread1.58.0
-      - libcaca0
-      - libfdt1
-      - libflac8
-      - libiscsi2
-      - libjpeg-turbo8
-      - libnspr4
-      - libnss3
-      - libogg0
-      - libopus0
-      - libpixman-1-0
-      - libpulse0
-      - librados2
-      - librbd1
-      - libsdl1.2debian
-      - libsndfile1
-      - libusb-1.0-0
-      - libusbredirparser1
-      - libvorbis0a
-      - libvorbisenc2
-      - libx11-6
-      - libxau6
-      - libxcb1
-      - libxdmcp6
-      - libxext6
-    build-packages:
-      - acpica-tools
-      - libaio-dev
-      - libasound2-dev
-      - libattr1-dev
-      - libbluetooth-dev
-      - libcap-dev
-      - libcap-ng-dev
-      - libcurl4-gnutls-dev
-      - libfdt-dev
-      - gnutls-dev
-      - libiscsi-dev
-      - libncurses5-dev
-      - try: [libnuma-dev]
-      - libpixman-1-dev
-      - libpulse-dev
-      - librados-dev
-      - librbd-dev
-      - libsasl2-dev
-      - libsdl1.2-dev
-      - try: [libspice-server-dev, libspice-protocol-dev]
-      - libusb-1.0-0-dev
-      - libusbredirparser-dev
-      - linux-libc-dev
-      - uuid-dev
-      - xfslibs-dev
-      - libjpeg-dev
-      - zlib1g-dev
-      - libpng-dev
-      - wget
-      - dpkg-dev
-      - gcc
-    configflags:
-      - --disable-blobs
-      - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current
-      - --localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
-      - --sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
-      - --extra-cflags=-DCONFIG_QEMU_DATAPATH='"/snap/$SNAPCRAFT_PROJECT_NAME/current/share/qemu:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/seabios:/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/ipxe/qemu"'
-      - --disable-user
-      - --disable-linux-user
-      - --enable-system
-      - --target-list=x86_64-softmmu
-    override-build: |
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg.orig.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.38.debian.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.5+dfsg-5ubuntu10.38.dsc
-      dpkg-source -x qemu_*.dsc
-      snapcraftctl build
+    - on amd64: [qemu-system-x86]
+    - on i386: [qemu-system-x86]
+    - on armhf: [qemu-system-arm]
+    - on arm64: [qemu-system-arm]
+    - qemu-utils
+    - libslang2
     organize:
-      # Hack to shift installed qemu back to root of snap
-      # required to ensure that pathing to files etc works at
-      # runtime
-      # * is not used to avoid directory merge conflicts
-      snap/microstack/current/: ./
+      usr/lib/*/pulseaudio/libpulsecommon-8.0.so: usr/lib/libpulsecommon-8.0.so
+      usr/share/seabios/bios-256k.bin: qemu/bios-256k.bin
+      usr/share/seabios/vgabios-stdvga.bin: qemu/vgabios-stdvga.bin
+      usr/share/seabios/kvmvapic.bin: qemu/kvmvapic.bin
+      usr/lib/ipxe/qemu/efi-virtio.rom: qemu/efi-virtio.rom
 
   kvm-support:
     plugin: nil
@@ -630,7 +549,8 @@ parts:
 
   libvirt:
     source: .
-    source-subdir: libvirt-1.3.1
+    source-subdir: libvirt-4.0.0
+    after: [openstack-projects]
     plugin: autotools
     build-packages:
     - libxml2-dev
@@ -648,20 +568,24 @@ parts:
     - libpciaccess-dev
     - libnl-3-dev
     - libnl-route-3-dev
+    - libxml2-utils
     - uuid-dev
     - try: [libnuma-dev]
+    - python-all
+    - python-six
     - wget
     - dpkg-dev
+    - xsltproc
     stage-packages:
-    - try: [dmidecode]
+    - dmidecode
     - dnsmasq
-    - dnsmasq-utils
-    - ebtables
     - libxml2
     - libyajl2
     - try: [libnuma1]
     - libcurl3-gnutls
+    - libpcap0.8
     - libpciaccess0
+    - pm-utils
     configflags:
     - --with-qemu
     - --without-bhyve
@@ -681,18 +605,19 @@ parts:
     - --without-storage-rbd
     - --without-storage-lvm
     - --without-selinux
+    - --sbindir=/snap/$SNAPCRAFT_PROJECT_NAME/current
     - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current
     - --localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
     - --sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common
     - DNSMASQ=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/sbin/dnsmasq
     - DMIDECODE=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/sbin/dmidecode
-    - OVSVSCTL=/snap/$SNAPCRAFT_PROJECT_NAME/current/bin/ovs-vsctl
-    - EBTABLES_PATH=/snap/$SNAPCRAFT_PROJECT_NAME/current/sbin/ebtables
-    - IPTABLES_PATH=/snap/$SNAPCRAFT_PROJECT_NAME/current/sbin/iptables
     override-build: |
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_1.3.1.orig.tar.gz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_1.3.1-1ubuntu10.25.debian.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_1.3.1-1ubuntu10.25.dsc
+      # Clean up old install
+      rm -R libvirt-4.0.* || true
+      # Download sources and patch
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0.orig.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.10.debian.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.10.dsc
       dpkg-source -x libvirt*.dsc
       snapcraftctl build
     organize:
@@ -733,13 +658,13 @@ parts:
   # Memcached Token Caching
   memcached:
     plugin: autotools
-    source: https://memcached.org/files/memcached-1.5.10.tar.gz
+    source: https://memcached.org/files/memcached-1.5.14.tar.gz
     build-packages:
       - libevent-dev
       - gcc
       - make
     stage-packages:
-      - libevent-2.0-5
+      - libevent-2.1-6
     override-build: |
       ./configure --prefix=$SNAPCRAFT_PART_INSTALL
       make
@@ -759,7 +684,7 @@ parts:
     source: https://www.kernel.org/pub/linux/utils/net/bridge-utils/bridge-utils-1.6.tar.gz
     plugin: autotools
   iproute2:
-    source: https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-4.9.0.tar.gz
+    source: https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-4.20.0.tar.gz
     plugin: autotools
     build-packages:
       - bison
@@ -773,7 +698,8 @@ parts:
     configflags:
       - --disable-nftables
       - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current
-    install: |
+    override-build: |
+      snapcraftctl build
       cp --remove-destination $SNAPCRAFT_PART_INSTALL/snap/$SNAPCRAFT_PROJECT_NAME/current/sbin/xtables-multi \
         $SNAPCRAFT_PART_INSTALL/snap/$SNAPCRAFT_PROJECT_NAME/current/bin/iptables-xml
     organize:

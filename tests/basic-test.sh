@@ -1,22 +1,37 @@
 #!/bin/bash
+##############################################################################
+#
+# This is a "basic" test script for Microstack. It will install the
+# microstack snap, spin up a test instance, and verify that the test
+# instance is accessible, and can access the Internet.
+#
+# The multipass snap and the petname debian package must be installed
+# on the host system in order to run this test.
+#
+# The basic test accepts two command line arguments:
+#
+# -u <channel> # First installs a released snap from the named
+#              # channel, in order to test basic upgrade functionality.
+#
+# -d <distro>  # Specifies the distro of the multipass vm.
+#
+##############################################################################
 
+# Configuration and checks
 set -ex
 
-# Command line args.
-# Pass -u edge/candidate/stable to install
-# microstack from the matching channel in the snap store before
-# installing the locally built snap. This will help verify that we
-# aren't breaking snaps in the wild with a change.
 UPGRADE_FROM="none"
-while getopts u: option
+DISTRO=18.04
+
+while getopts u:d: option
 do
     case "${option}"
     in
         u) UPGRADE_FROM=${OPTARG};;
+        d) DISTRO=${OPTARG};;
     esac
 done
 
-# Dependencies. TODO: move these into a testing harness
 command -v multipass > /dev/null || (echo "Please install multipass."; exit 1);
 command -v petname > /dev/null || (echo "Please install petname."; exit 1);
 if [ ! -f microstack_rocky_amd64.snap ]; then
@@ -26,7 +41,13 @@ if [ ! -f microstack_rocky_amd64.snap ]; then
 fi
 
 MACHINE=$(petname)
-DISTRO=18.04
+
+# Setup
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "++    Starting tests on $MACHINE.               ++"
+echo "++      Distro: $DISTRO                         ++"
+echo "++      Upgrade from: $UPGRADE_FROM             ++"
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 # Launch a machine and copy the snap to it.
 multipass launch --cpus 2 --mem 16G $DISTRO --name $MACHINE
@@ -86,9 +107,10 @@ done;
 
 # Cleanup
 unset IP
-echo "Completed tests. Tearing down $MACHINE."
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "++   Completed tests. Tearing down $MACHINE.    ++"
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++"
 multipass stop $MACHINE
 multipass delete $MACHINE
 multipass purge  # This is a little bit rude to do, but we assume that
                  # we can beat up on the test machine a bit.
-
