@@ -64,4 +64,4 @@ while :; do
     fi
 done
 
-echo "You can also visit the openstack dashboard at 'http://10.20.20.1/'"
+echo "You can also visit the openstack dashboard at 'http://10.20.20.1:8080/'"

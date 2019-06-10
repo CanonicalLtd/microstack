@@ -11,9 +11,9 @@ systemctl restart snap.microstack.keystone-*
 openstack user show admin || {
     snap-openstack keystone-manage bootstrap \
         --bootstrap-password $OS_PASSWORD \
-        --bootstrap-admin-url http://10.20.20.1:5000/v3/ \
-        --bootstrap-internal-url http://10.20.20.1:5000/v3/ \
-        --bootstrap-public-url http://10.20.20.1:5000/v3/ \
+        --bootstrap-admin-url http://10.20.20.1:15000/v3/ \
+        --bootstrap-internal-url http://10.20.20.1:15000/v3/ \
+        --bootstrap-public-url http://10.20.20.1:15000/v3/ \
         --bootstrap-region-id microstack
 }
 

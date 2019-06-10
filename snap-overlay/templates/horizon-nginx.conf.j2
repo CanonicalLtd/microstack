@@ -2,7 +2,7 @@
 # to define this template. Be sure to update "listen" with the port number and
 # also update "api-name" for the socket.
 server {
-    listen 80;
+    listen 8080;
     access_log {{ snap_common }}/log/nginx-access.log;
     error_log {{ snap_common }}/log/nginx-error.log;
     location / {

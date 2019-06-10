@@ -20,6 +20,9 @@ for db in neutron nova nova_api nova_cell0 cinder glance keystone; do
         | mysql-start-client -u root
 done
 
+echo "update endpoint set url = REPLACE(url, 'http://localhost:5000/v3/', 'http://localhost:15000/v3/');" \
+        | mysql-start-client -u root keystone
+
 # Grant nova user access to cell0
 echo "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'10.20.20.1' IDENTIFIED BY 'nova';" | mysql-start-client -u root
 
@@ -48,7 +51,7 @@ while ! nc -z 10.20.20.1 9292; do sleep 0.1; done;
 sleep 5
 
 # Wait for identity service
-while ! nc -z 10.20.20.1 5000; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 15000; do sleep 0.1; done;
 
 # Setup the cirros image, which is used by the launch app
 openstack image show cirros || {
@@ -64,4 +67,4 @@ openstack image show cirros || {
 }
 
 # Wait for horizon
-while ! nc -z 10.20.20.1 80; do sleep 0.1; done;
+while ! nc -z 10.20.20.1 8080; do sleep 0.1; done;
