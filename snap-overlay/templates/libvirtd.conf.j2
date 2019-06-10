@@ -321,9 +321,9 @@ auth_unix_rw = "none"
 #
 # Logging controls
 #
-#log_level = 1
-#log_filters="1:qemu 3:remote 4:event 3:util.json 3:rpc"
-#log_outputs="1:file:/var/snap/microstack/common/log/libvirt/libvirtd.log"
+log_level = 1
+log_filters="1:qemu 3:remote 4:event 3:util.json 3:rpc"
+log_outputs="1:file:{{ snap_common }}/log/libvirt/libvirtd.log"
 
 # Logging level: 4 errors, 3 warnings, 2 information, 1 debug
 # basically 1 will log everything possible

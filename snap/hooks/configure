@@ -65,6 +65,10 @@ openstack image show cirros || {
         --public --container-format=bare --disk-format=qcow2 cirros
 }
 
+# Restart libvirt and virtlogd to get logging
+# TODO: figure out why this doesn't Just Work initially
+systemctl restart snap.microstack.*virt*
+
 # Wait for horizon
 while ! nc -z 10.20.20.1 80; do sleep 0.1; done;
 
