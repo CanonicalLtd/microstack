@@ -609,6 +609,9 @@ parts:
       - --enable-system
       - --target-list=x86_64-softmmu
     override-build: |
+      # Clean up old install
+      rm -R qemu-2.11* || true
+      # Download sources and patch
       wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.11+dfsg.orig.tar.xz
       wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.11+dfsg-1ubuntu7.15.debian.tar.xz
       wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.11+dfsg-1ubuntu7.15.dsc
