@@ -527,7 +527,7 @@ parts:
   # libvirt/qemu
   qemu:
     source: .
-    source-subdir: qemu-2.11+dfsg
+    source-subdir: qemu-2.12+dfsg
     plugin: autotools
     stage-packages:
       - seabios
@@ -610,11 +610,11 @@ parts:
       - --target-list=x86_64-softmmu
     override-build: |
       # Clean up old install
-      rm -R qemu-2.11* || true
+      rm -R qemu-2.* || true
       # Download sources and patch
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.11+dfsg.orig.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.11+dfsg-1ubuntu7.15.debian.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.11+dfsg-1ubuntu7.15.dsc
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.12+dfsg.orig.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.12+dfsg-3ubuntu8.9.debian.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.12+dfsg-3ubuntu8.9.dsc
       dpkg-source -x qemu_*.dsc
       snapcraftctl build
     organize:
@@ -632,7 +632,7 @@ parts:
   libvirt:
     source: .
     source-subdir: libvirt-4.0.0
-    after: [openstack-projects]
+    after: [openstack-projects, qemu]
     plugin: autotools
     build-packages:
     - libxml2-dev
