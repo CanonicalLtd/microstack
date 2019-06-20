@@ -1,0 +1,31 @@
+diff --git a/nova/virt/libvirt/host.py b/nova/virt/libvirt/host.py
+index 65ae0ff2f1..b75adf9269 100644
+--- a/lib/python2.7/site-packages/nova/virt/libvirt/host.py
++++ b/lib/python2.7/site-packages/nova/virt/libvirt/host.py
+@@ -503,21 +503,25 @@ class Host(object):
+                 libvirt_version = conn.getLibVersion()
+                 if op(libvirt_version,
+                       versionutils.convert_version_to_int(lv_ver)):
++                    LOG.error("version check false because lv_ver too low")
+                     return False
+ 
+             if hv_ver is not None:
+                 hypervisor_version = conn.getVersion()
+                 if op(hypervisor_version,
+                       versionutils.convert_version_to_int(hv_ver)):
++                    LOG.error("version check false because hv_ver too low")
+                     return False
+ 
+             if hv_type is not None:
+                 hypervisor_type = conn.getType()
+                 if hypervisor_type != hv_type:
++                    LOG.error("version check false because hv_type too low")
+                     return False
+ 
+             return True
+-        except Exception:
++        except Exception as e:
++            LOG.exception("version check false because exception {}".format(e))
+             return False
+ 
+     def has_min_version(self, lv_ver=None, hv_ver=None, hv_type=None):

@@ -62,6 +62,11 @@ fi
 # Install the snap under test
 multipass exec $MACHINE -- \
           sudo snap install --classic --dangerous microstack*.snap
+# Comment out the above and uncomment below to install the version of
+# the snap from the store.
+# TODO: add this as a flag.
+#multipass exec $MACHINE -- \
+#          sudo snap install --classic --edge microstack
 
 # Run microstack.launch
 multipass exec $MACHINE -- /snap/bin/microstack.launch breakfast

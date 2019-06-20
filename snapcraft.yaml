@@ -351,6 +351,8 @@ parts:
       - libpython2.7
     override-prime: |
       snapcraftctl prime
+      # Uncomment the below line for better python-libvirt debugging output.
+      # patch --batch --forward --strip 1 --input ../project/patches/nova/nova_log_error.patch
       # Now that everything is built, let's disable user site-packages
       # as stated in PEP-0370
       sed -i usr/lib/python2.7/site.py -e 's/^ENABLE_USER_SITE = None$/ENABLE_USER_SITE = False/'
@@ -527,8 +529,10 @@ parts:
   # libvirt/qemu
   qemu:
     source: .
-    source-subdir: qemu-2.12+dfsg
+    source-subdir: qemu-2.11+dfsg
     plugin: autotools
+    after:
+      - openstack-projects
     stage-packages:
       - seabios
       - ipxe-qemu
@@ -565,6 +569,7 @@ parts:
       - libxau6
       - libxcb1
       - libxdmcp6
+      - libxen-dev
       - libxext6
     build-packages:
       - acpica-tools
@@ -612,9 +617,9 @@ parts:
       # Clean up old install
       rm -R qemu-2.* || true
       # Download sources and patch
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.12+dfsg.orig.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.12+dfsg-3ubuntu8.9.debian.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.12+dfsg-3ubuntu8.9.dsc
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.11+dfsg.orig.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.11+dfsg-1ubuntu7.14.debian.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/q/qemu/qemu_2.11+dfsg-1ubuntu7.14.dsc
       dpkg-source -x qemu_*.dsc
       snapcraftctl build
     organize:
@@ -667,7 +672,6 @@ parts:
     - libcurl3-gnutls
     - libpcap0.8
     - libpciaccess0
-    - pm-utils
     configflags:
     - --with-qemu
     - --without-bhyve
