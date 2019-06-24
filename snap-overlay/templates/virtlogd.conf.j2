@@ -10,7 +10,7 @@
 # basically 1 will log everything possible
 
 #log_level = 3
-log_level = 1
+#log_level = 1
 
 # Logging filters:
 # A filter allows to select a different logging level for a given category
@@ -33,7 +33,7 @@ log_level = 1
 # e.g. to only get warning or errors from the remote layer and only errors
 # from the event layer:
 #log_filters="3:remote 4:event"
-log_filters="1:qemu 3:remote 4:event 3:util.json 3:rpc"
+#log_filters="1:qemu 3:remote 4:event 3:util.json 3:rpc"
 
 # Logging outputs:
 # An output is one of the places to save logging information
@@ -56,7 +56,7 @@ log_filters="1:qemu 3:remote 4:event 3:util.json 3:rpc"
 # e.g. to log all warnings and errors to syslog under the virtlogd ident:
 #log_outputs="3:syslog:virtlogd"
 #
-log_outputs="1:file:{{ snap_common }}/log/libvirtd.log"
+#log_outputs="1:file:{{ snap_common }}/log/libvirtd.log"
 
 # The maximum number of concurrent client connections to allow
 # over all sockets combined.

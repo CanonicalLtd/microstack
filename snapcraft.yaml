@@ -341,9 +341,9 @@ parts:
       - git
       - libffi-dev
       - libssl-dev
+      - libvirt-dev
       - libxml2-dev
       - libxslt1-dev
-      - libvirt-dev
     stage-packages:
       - conntrack
       - coreutils
@@ -745,18 +745,9 @@ parts:
 
   # Memcached Token Caching
   memcached:
-    plugin: autotools
-    source: https://memcached.org/files/memcached-1.5.14.tar.gz
-    build-packages:
-      - libevent-dev
-      - gcc
-      - make
+    plugin: nil
     stage-packages:
-      - libevent-2.1-6
-    override-build: |
-      ./configure --prefix=$SNAPCRAFT_PART_INSTALL
-      make
-      make install
+      - memcached
 
   # Cinder LVM backend
   lvm2:
@@ -767,22 +758,18 @@ parts:
       - --with-default-system-dir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/etc/
     build-attributes: [no-patchelf]
 
-  # Misc utils for hypervisor networking
-  bridge-utils:
-    source: https://www.kernel.org/pub/linux/utils/net/bridge-utils/bridge-utils-1.6.tar.gz
-    plugin: autotools
-  iproute2:
-    source: https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-4.20.0.tar.gz
-    plugin: autotools
-    build-packages:
-      - bison
-      - flex
-      - libdb5.3-dev
+  # Networking tools
   iptables:
     source: http://iptables.netfilter.org/projects/iptables/files/iptables-1.6.0.tar.bz2
     plugin: autotools
     build-packages:
       - libnftnl-dev
+    stage-packages:
+      - libatm1
+      # Additional utilties for hypervisor networking
+      - iproute2
+      - bridge-utils
+      - ipset
     configflags:
       - --disable-nftables
       - --prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current
@@ -797,26 +784,15 @@ parts:
       # * is not used to avoid directory merge conflicts
       snap/microstack/current/: ./
 
-  ipset:
-    source: http://ipset.netfilter.org/ipset-6.30.tar.bz2
-    plugin: autotools
-    build-packages:
-      - libltdl-dev
-      - libmnl-dev
-    configflags:
-      - "--with-kmod=no"
-
+  # Utility to launch a server. Creates security groups, floating ips,
+  # and other necessities as well.
   launch:
     plugin: dump
     source: src/launch
     organize:
       launch.sh: bin/launch.sh
 
-  # Openstack Shared Parts
+  # Templates and other files to be overlaid over the snap.
   overlay:
     plugin: dump
     source: snap-overlay
-
-  configure-the-things:
-    plugin: dump
-    source: src/experiments
