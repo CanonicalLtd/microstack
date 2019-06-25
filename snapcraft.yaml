@@ -309,7 +309,7 @@ apps:
 #    plugs:
 #      - network-bind
 
-  # Utility to launch a server. Creates security groups, floating ips,
+  # Utility to launch a vm. Creates security groups, floating ips,
   # and other necessities as well.
   launch:
     command: bin/launch.sh
