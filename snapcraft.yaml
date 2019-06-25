@@ -309,6 +309,8 @@ apps:
 #    plugs:
 #      - network-bind
 
+  # Utility to launch a server. Creates security groups, floating ips,
+  # and other necessities as well.
   launch:
     command: bin/launch.sh
 #    plugs:
@@ -783,14 +785,6 @@ parts:
       # runtime
       # * is not used to avoid directory merge conflicts
       snap/microstack/current/: ./
-
-  # Utility to launch a server. Creates security groups, floating ips,
-  # and other necessities as well.
-  launch:
-    plugin: dump
-    source: src/launch
-    organize:
-      launch.sh: bin/launch.sh
 
   # Templates and other files to be overlaid over the snap.
   overlay:
