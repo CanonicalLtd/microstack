@@ -145,7 +145,8 @@ Answer the questions as follows:
   <tr><td>cloud type:</td> <td><code>openstack</code></td></tr>
   <tr><td>endpoint:</td> <td><code>http://10.20.20.1:5000/v3</code></td></tr>
   <tr><td>cert path:</td> <td><code>none</code></td></tr>
-  <tr><td>region:</td> <td><code>userpass</code></td></tr>
+  <tr><td>auth type:</td> <td><code>userpass</code></td></tr>
+  <tr><td>region:</td> <td><code>microstack</code></td></tr>
   <tr><td>region endpoint:</td> <td><code>http://10.20.20.1:5000/v3</code></td></tr>
   <tr><td>add another region?:</td> <td><code>N</code></td></tr>
 </table>

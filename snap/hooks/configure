@@ -34,7 +34,9 @@ echo "Configuring RabbitMQ"
 # Rabbitmq isn't always started when we run this. Wait for it to start.
 while :;
 do
-    grep "Starting broker... completed" ${SNAP_COMMON}/log/rabbitmq/startup_log && break
+    grep "Starting broker..." ${SNAP_COMMON}/log/rabbitmq/startup_log && \
+        grep "completed" ${SNAP_COMMON}/log/rabbitmq/startup_log && \
+        break
     echo "waiting for rabbitmq to start" && sleep 1;
 done
 
@@ -63,5 +65,15 @@ openstack image show cirros || {
         --public --container-format=bare --disk-format=qcow2 cirros
 }
 
+# Restart libvirt and virtlogd to get logging
+# TODO: figure out why this doesn't Just Work initially
+systemctl restart snap.microstack.*virt*
+
 # Wait for horizon
 while ! nc -z 10.20.20.1 80; do sleep 0.1; done;
+
+# Restart Placement API
+# Workaround for issue w/ base:core18, where the Placement API throws
+# http 500s until it has been restarted.
+# TODO: root cause and fix the problem.
+systemctl restart snap.microstack.nova-uwsgi.service

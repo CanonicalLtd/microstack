@@ -36,6 +36,8 @@ setup:
 # TODO add local_settings.py
     horizon-snap.conf.j2: "{snap_common}/etc/horizon/horizon.conf.d/horizon-snap.conf"
     horizon-nginx.conf.j2: "{snap_common}/etc/nginx/snap/sites-enabled/horizon.conf"
+    libvirtd.conf.j2: "{snap_common}/libvirt/libvirtd.conf"
+    virtlogd.conf.j2: "{snap_common}/libvirt/virtlogd.conf"
   chmod:
     "{snap_common}/instances": 0755
 entry_points:
@@ -298,4 +300,4 @@ entry_points:
       - "{snap_common}/etc/horizon/horizon.conf.d"
     log-file: "{snap_common}/log/horizon-api.log"
     templates:
-      horizon.ini.j2: "{snap_common}/etc/horizon/uwsgi/snap/horizon.ini"      
+      horizon.ini.j2: "{snap_common}/etc/horizon/uwsgi/snap/horizon.ini"
