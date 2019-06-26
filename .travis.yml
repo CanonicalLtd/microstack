@@ -11,7 +11,7 @@ virtualenv:
 install:
   - sudo snap install multipass --classic --beta
   - sudo snap install snapcraft --classic
-  - sudo usermod -a -G multipass travis
+  - sudo usermod -a -G sudo travis
   - snapcraft
 script:
   - tests/basic_test.sh
