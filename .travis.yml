@@ -19,6 +19,9 @@ install:
   - ls -al
   - pwd
   - sudo multipass list
+  - sudo systemctl status snapd
+  - sudo multipass launch bionic --name test
+  - sudo multipass delete test
   - sudo snapcraft --debug
 script:
   - tests/basic_test.sh
