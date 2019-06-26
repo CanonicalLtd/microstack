@@ -16,6 +16,9 @@ install:
   - ls -al /run/multipass_socket
   - groups $USER
   - which snapcraft
-  - sudo snapcraft --debug microstack
+  - ls -al
+  - pwd
+  - sudo multipass list
+  - sudo snapcraft --debug
 script:
   - tests/basic_test.sh
