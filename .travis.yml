@@ -11,10 +11,9 @@ virtualenv:
 install:
   - sudo snap install multipass --classic --beta
   - sudo snap install snapcraft --classic
-  - sudo usermod -a -G sudo travis
-  - newgrp sudo
+  - sudo adduser $USER sudo
   - ls -al /run/multipass_socket
-  - groups travis
+  - groups $USER
   - which snapcraft
   - snapcraft --debug
 script:
