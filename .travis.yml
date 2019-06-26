@@ -9,12 +9,13 @@ before_install:
 virtualenv:
   system_site_packages: true
 install:
+  - sudo apt-get --yes --no-install-recommends install snapd
   - sudo snap install multipass --classic --beta
   - sudo snap install snapcraft --classic
   - sudo adduser $USER sudo
   - ls -al /run/multipass_socket
   - groups $USER
   - which snapcraft
-  - sudo /snap/bin/snapcraft --debug
+  - sudo snapcraft --debug
 script:
   - tests/basic_test.sh
