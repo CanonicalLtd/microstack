@@ -11,6 +11,6 @@ virtualenv:
 install:
   - sudo snap install multipass --classic --beta
   - sudo snap install snapcraft --classic
-  - snapcraft
+  - sudo snapcraft
 script:
-  - tests/basic_test.sh
+  - sudo tests/basic_test.sh
