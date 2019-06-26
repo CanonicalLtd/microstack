@@ -4,13 +4,14 @@ language: python
 python:
   - "2.7"
 before_install:
-  - sudo apt -qq update
-  - sudo apt install -y petname
+  - echo `whoami`
+  - apt -qq update
+  - apt install -y petname
 virtualenv:
   system_site_packages: true
 install:
-  - sudo snap install multipass --classic --beta
-  - sudo snap install snapcraft --classic
-  - sudo snapcraft
+  - snap install multipass --classic --beta
+  - snap install snapcraft --classic
+  - snapcraft
 script:
-  - sudo tests/basic_test.sh
+  - tests/basic_test.sh
