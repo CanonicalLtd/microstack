@@ -12,6 +12,7 @@ install:
   - sudo snap install multipass --classic --beta
   - sudo snap install snapcraft --classic
   - sudo usermod -a -G sudo travis
+  - newgrp
   - ls -al /run/multipass_socket
   - snapcraft
 script:
