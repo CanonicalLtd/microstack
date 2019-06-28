@@ -12,20 +12,11 @@ environment:
   PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
   LC_ALL: C
   OS_PLACEMENT_CONFIG_DIR: $SNAP/etc/nova/
-  # admin rc (TODO: put this someplace more sensible)
-  OS_PROJECT_DOMAIN_NAME: default
-  OS_USER_DOMAIN_NAME: default
-  OS_PROJECT_NAME: admin
-  OS_USERNAME: admin
-  OS_PASSWORD: keystone
-  OS_AUTH_URL: http://10.20.20.1:5000
-  OS_IDENTITY_API_VERSION: 3
-  OS_IMAGE_API_VERSION: 2
 
 apps:
   # Openstack
   openstack:
-    command: openstack
+    command: openstack-wrapper openstack
 #    plugs:
 #      - network
 
@@ -329,7 +320,7 @@ parts:
       - oslo.cache[dogpile]
       - pymysql
       - uwsgi
-      - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
+      - git+https://github.com/petevg/snap.openstack#egg=snap.openstack
       - http://tarballs.openstack.org/nova/nova-stable-rocky.tar.gz
       - http://tarballs.openstack.org/neutron/neutron-stable-rocky.tar.gz
       - http://tarballs.openstack.org/glance/glance-stable-rocky.tar.gz
@@ -376,6 +367,14 @@ parts:
         - etc/keystone/*
     stage: [$etc]
     prime: [$etc]
+
+  openstack-wrapper:
+    source: ./snap-wrappers/openstack
+    plugin: dump
+    after:
+      - openstack-projects
+    organize:
+      openstack-wrapper: bin/openstack-wrapper
 
   nova-config:
     after: [openstack-projects]
@@ -706,8 +705,8 @@ parts:
       rm -R libvirt-4.0.* || true
       # Download sources and patch
       wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0.orig.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.10.debian.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.10.dsc
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.12.debian.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.12.dsc
       dpkg-source -x libvirt*.dsc
       snapcraftctl build
     organize:

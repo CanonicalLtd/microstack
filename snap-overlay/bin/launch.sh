@@ -2,6 +2,8 @@
 
 set -e
 
+source $SNAP_COMMON/etc/microstack.rc
+
 if [ -z "$1" ]; then
     echo "Please specify a name for the server."
     exit 1
@@ -64,4 +66,4 @@ while :; do
     fi
 done
 
-echo "You can also visit the openstack dashboard at 'http://10.20.20.1/'"
+echo "You can also visit the openstack dashboard at 'http://$extgateway/'"

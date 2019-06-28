@@ -1,4 +1,19 @@
-#!/bin/bash -e
+#!/bin/bash
+set -ex
+
+ospassword=$(snapctl get ospassword)
+extgateway=$(snapctl get extgateway)
+dns=$(snapctl get dns)
+
+if [ -z "$ospassword" -o -z "$extgateway" -o -z "$dns" ]; then
+    echo "Missing required config value."
+    snapctl get microstack
+    exit 1
+fi
+
+snap-openstack setup # Write out templates
+
+source $SNAP_COMMON/etc/microstack.rc
 
 # Open up networking so that instances can route to the Internet (see
 # bin/setup-br-ex for more networking setup, executed on microstack
@@ -9,25 +24,25 @@ sudo sysctl net.ipv4.ip_forward=1
 echo "Creating OpenStack Databases"
 
 # Wait for MySQL to startup
-while ! nc -z 10.20.20.1 3306; do sleep 0.1; done;
+while ! nc -z $extgateway 3306; do sleep 0.1; done;
 sleep 5
 
 # Wait for rabbitmq to start
-while ! nc -z 10.20.20.1 5672; do sleep 0.1; done;
+while ! nc -z $extgateway 5672; do sleep 0.1; done;
 
 for db in neutron nova nova_api nova_cell0 cinder glance keystone; do
-    echo "CREATE DATABASE IF NOT EXISTS ${db}; GRANT ALL PRIVILEGES ON ${db}.* TO '${db}'@'10.20.20.1' IDENTIFIED BY '${db}';" \
+    echo "CREATE DATABASE IF NOT EXISTS ${db}; GRANT ALL PRIVILEGES ON ${db}.* TO '${db}'@'$extgateway' IDENTIFIED BY '${db}';" \
         | mysql-start-client -u root
 done
 
 # Grant nova user access to cell0
-echo "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'10.20.20.1' IDENTIFIED BY 'nova';" | mysql-start-client -u root
+echo "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'$extgateway' IDENTIFIED BY 'nova';" | mysql-start-client -u root
 
-# Endpoints from localhost -> 10.20.20.1
-# TODO Rebuild database so that these are already set to 10.20.20.1,
+# Endpoints from localhost -> $extgateway
+# TODO Rebuild database so that these are already set to $extgateway,
 # after lp:1824176 is addressed, and the process of building a new
 # mysql.tar.xz is less fraught.
-openstack endpoint list | grep localhost | while read line; do openstack endpoint set `echo $line | cut -d" " -f2` --url `echo $line | cut -d" " -f14 | sed 's/localhost/10.20.20.1/'`; done
+openstack endpoint list | grep localhost | while read line; do openstack endpoint set `echo $line | cut -d" " -f2` --url `echo $line | cut -d" " -f14 | sed "s/localhost/$extgateway/"`; done
 
 # RabbitMQ
 echo "Configuring RabbitMQ"
@@ -45,12 +60,12 @@ HOME=$SNAP_COMMON/lib/rabbitmq rabbitmqctl set_permissions openstack ".*" ".*" "
 
 # Glance
 echo "Waiting for glance to start."
-while ! nc -z 10.20.20.1 9292; do sleep 0.1; done;
+while ! nc -z $extgateway 9292; do sleep 0.1; done;
 
 sleep 5
 
 # Wait for identity service
-while ! nc -z 10.20.20.1 5000; do sleep 0.1; done;
+while ! nc -z $extgateway 5000; do sleep 0.1; done;
 
 # Setup the cirros image, which is used by the launch app
 openstack image show cirros || {
@@ -70,7 +85,7 @@ openstack image show cirros || {
 systemctl restart snap.microstack.*virt*
 
 # Wait for horizon
-while ! nc -z 10.20.20.1 80; do sleep 0.1; done;
+while ! nc -z $extgateway 80; do sleep 0.1; done;
 
 # Restart Placement API
 # Workaround for issue w/ base:core18, where the Placement API throws

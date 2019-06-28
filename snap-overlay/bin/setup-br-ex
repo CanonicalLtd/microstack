@@ -9,13 +9,15 @@
 
 set -ex
 
+extgateway=$(snapctl get extgateway)
+
 # Create external integration bridge
 ovs-vsctl --retry --may-exist add-br br-ex
 
 # Configure br-ex
-ip address add 10.20.20.1/24 dev br-ex || :
+ip address add $extgateway/24 dev br-ex || :
 ip link set br-ex up || :
 
-sudo iptables -t nat -A POSTROUTING -s 10.20.20.1/24 ! -d 10.20.20.1/24 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -s $extgateway/24 ! -d $extgateway/24 -j MASQUERADE
 
 exit 0

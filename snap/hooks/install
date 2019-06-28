@@ -1,5 +1,10 @@
-#!/bin/sh
-set -e
+#!/bin/bash
+set -ex
+
+snapctl set \
+        ospassword=keystone \
+        extgateway=10.20.20.1 \
+        dns=1.1.1.1
 
 # MySQL snapshot for speedy install
 # snapshot is a mysql data dir with
@@ -11,8 +16,10 @@ tar -xJf ${SNAP}/data/mysql.tar.xz -C ${SNAP_COMMON}/lib
 echo "Installing configuration for OpenStack Services"
 for project in neutron nova keystone glance; do
     mkdir -p ${SNAP_COMMON}/etc/${project}/${project}.conf.d
-    cp -r ${SNAP}/etc/${project}/${project}.conf.d/* ${SNAP_COMMON}/etc/${project}/${project}.conf.d
+    cp -r ${SNAP}/etc/${project}/${project}.conf.d/* ${SNAP_COMMON}/etc/${project}/${project}.conf.d || true # Skip conf files that have been moved into templates
 done
+
+snap-openstack setup  # Sets up templates for the first time.
 
 # Configure Keystone Fernet Keys
 snap-openstack keystone-manage fernet_setup --keystone-user root --keystone-group root

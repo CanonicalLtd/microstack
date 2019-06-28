@@ -38,8 +38,27 @@ setup:
     horizon-nginx.conf.j2: "{snap_common}/etc/nginx/snap/sites-enabled/horizon.conf"
     libvirtd.conf.j2: "{snap_common}/libvirt/libvirtd.conf"
     virtlogd.conf.j2: "{snap_common}/libvirt/virtlogd.conf"
+    microstack.rc.j2: "{snap_common}/etc/microstack.rc"
+    glance.conf.d.keystone.conf.j2: "{snap_common}/etc/glance/glance.conf.d/keystone.conf"
+    nova.conf.d.keystone.conf.j2: "{snap_common}/etc/nova/nova.conf.d/keystone.conf"
+    nova.conf.d.database.conf.j2: "{snap_common}/etc/nova/nova.conf.d/database.conf"
+    nova.conf.d.rabbitmq.conf.j2: "{snap_common}/etc/nova/nova.conf.d/rabbitmq.conf"
+    nova.conf.d.nova-placement.conf.j2: "{snap_common}/etc/nova/nova.conf.d/nova-placement.conf"
+    nova.conf.d.glance.conf.j2: "{snap_common}/etc/nova/nova.conf.d/glance.conf"
+    nova.conf.d.neutron.conf.j2: "{snap_common}/etc/nova/nova.conf.d/neutron.conf"
+    keystone.database.conf.j2: "{snap_common}/etc/keystone/keystone.conf.d/database.conf"
+    glance.database.conf.j2: "{snap_common}/etc/glance/glance.conf.d/database.conf"
+    neutron.keystone.conf.j2: "{snap_common}/etc/neutron/neutron.conf.d/keystone.conf"
+    neutron.nova.conf.j2: "{snap_common}/etc/neutron/neutron.conf.d/nova.conf"
+    neutron.database.conf.j2: "{snap_common}/etc/neutron/neutron.conf.d/database.conf"
+
   chmod:
     "{snap_common}/instances": 0755
+    "{snap_common}/etc/microstack.rc": 0644
+  snap-config-keys:
+    - ospassword
+    - extgateway
+    - dns
 entry_points:
   keystone-manage:
     binary: "{snap}/bin/keystone-manage"
