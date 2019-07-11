@@ -1,5 +1,5 @@
 name: microstack
-version: rocky
+version: stein
 base: core18
 summary: OpenStack on your laptop.
 description: |
@@ -322,19 +322,19 @@ parts:
     plugin: python
     python-version: python2
     constraints:
-      - https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
-    source: http://tarballs.openstack.org/keystone/keystone-stable-rocky.tar.gz
+      - https://raw.githubusercontent.com/openstack/requirements/stable/stein/upper-constraints.txt
+    source: http://tarballs.openstack.org/keystone/keystone-stable-stein.tar.gz
     python-packages:
       - libvirt-python
       - oslo.cache[dogpile]
       - pymysql
       - uwsgi
       - git+https://github.com/openstack/snap.openstack#egg=snap.openstack
-      - http://tarballs.openstack.org/nova/nova-stable-rocky.tar.gz
-      - http://tarballs.openstack.org/neutron/neutron-stable-rocky.tar.gz
-      - http://tarballs.openstack.org/glance/glance-stable-rocky.tar.gz
-      - http://tarballs.openstack.org/cinder/cinder-stable-rocky.tar.gz
-      - http://tarballs.openstack.org/horizon/horizon-stable-rocky.tar.gz
+      - http://tarballs.openstack.org/nova/nova-stable-stein.tar.gz
+      - http://tarballs.openstack.org/neutron/neutron-stable-stein.tar.gz
+      - http://tarballs.openstack.org/glance/glance-stable-stein.tar.gz
+      - http://tarballs.openstack.org/cinder/cinder-stable-stein.tar.gz
+      - http://tarballs.openstack.org/horizon/horizon-stable-stein.tar.gz
       - python-cinderclient
       - python-openstackclient
       - python-swiftclient
@@ -364,7 +364,7 @@ parts:
   keystone-config:
     after: [openstack-projects]
     plugin: dump
-    source: http://tarballs.openstack.org/keystone/keystone-stable-rocky.tar.gz
+    source: http://tarballs.openstack.org/keystone/keystone-stable-stein.tar.gz
     organize:
       etc/*.conf: etc/keystone/
       etc/*.ini: etc/keystone/
@@ -380,7 +380,7 @@ parts:
   nova-config:
     after: [openstack-projects]
     plugin: dump
-    source: http://tarballs.openstack.org/nova/nova-stable-rocky.tar.gz
+    source: http://tarballs.openstack.org/nova/nova-stable-stein.tar.gz
     filesets:
       etc:
         - etc/nova/*
@@ -390,7 +390,7 @@ parts:
   neutron-config:
     after: [openstack-projects]
     plugin: dump
-    source: http://tarballs.openstack.org/neutron/neutron-stable-rocky.tar.gz
+    source: http://tarballs.openstack.org/neutron/neutron-stable-stein.tar.gz
     organize:
       etc/*.conf: etc/neutron/
       etc/*.ini: etc/neutron/
@@ -405,7 +405,7 @@ parts:
   glance-config:
     after: [openstack-projects]
     plugin: dump
-    source: http://tarballs.openstack.org/glance/glance-stable-rocky.tar.gz
+    source: http://tarballs.openstack.org/glance/glance-stable-stein.tar.gz
     organize:
       etc/*.conf: etc/glance/
       etc/*.ini: etc/glance/
@@ -419,7 +419,7 @@ parts:
   cinder-config:
     after: [openstack-projects]
     plugin: dump
-    source: http://tarballs.openstack.org/cinder/cinder-stable-rocky.tar.gz
+    source: http://tarballs.openstack.org/cinder/cinder-stable-stein.tar.gz
     organize:
       etc/*.conf: etc/cinder/
       etc/*.ini: etc/cinder/
@@ -434,7 +434,7 @@ parts:
   horizon-config:
     after: [openstack-projects]
     plugin: dump
-    source: http://tarballs.openstack.org/horizon/horizon-stable-rocky.tar.gz
+    source: http://tarballs.openstack.org/horizon/horizon-stable-stein.tar.gz
     organize:
       etc/*.conf: etc/horizon/
     filesets:
