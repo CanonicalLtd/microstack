@@ -706,8 +706,8 @@ parts:
       rm -R libvirt-4.0.* || true
       # Download sources and patch
       wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0.orig.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.10.debian.tar.xz
-      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.10.dsc
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.12.debian.tar.xz
+      wget http://archive.ubuntu.com/ubuntu/pool/main/libv/libvirt/libvirt_4.0.0-1ubuntu8.12.dsc
       dpkg-source -x libvirt*.dsc
       snapcraftctl build
     organize:
