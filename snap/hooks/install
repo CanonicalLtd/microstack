@@ -4,6 +4,7 @@ set -ex
 snapctl set \
         ospassword=keystone \
         extgateway=10.20.20.1 \
+        extcidr=10.20.20.1/24 \
         dns=1.1.1.1
 
 # MySQL snapshot for speedy install

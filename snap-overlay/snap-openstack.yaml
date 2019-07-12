@@ -58,6 +58,7 @@ setup:
   snap-config-keys:
     - ospassword
     - extgateway
+    - extcidr
     - dns
 entry_points:
   keystone-manage:

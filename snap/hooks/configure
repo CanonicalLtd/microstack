@@ -3,9 +3,10 @@ set -ex
 
 ospassword=$(snapctl get ospassword)
 extgateway=$(snapctl get extgateway)
+extcidr=$(snapctl get extcidr)
 dns=$(snapctl get dns)
 
-if [ -z "$ospassword" -o -z "$extgateway" -o -z "$dns" ]; then
+if [ -z "$ospassword" -o -z "$extgateway" -o -z "$dns" -o -z "$extcidr"]; then
     echo "Missing required config value."
     snapctl get microstack
     exit 1
