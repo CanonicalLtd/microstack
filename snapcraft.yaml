@@ -28,38 +28,38 @@ apps:
 
   # Keystone
   keystone-uwsgi:
-    command: snap-openstack keystone-uwsgi
+    command: snap-openstack launch keystone-uwsgi
     daemon: simple
 #    plugs:
 #      - network-bind
   keystone-manage:
-    command: snap-openstack keystone-manage
+    command: snap-openstack launch keystone-manage
 #    plugs:
 #      - network
 
   # Nova
   nova-uwsgi:
-    command: snap-openstack nova-uwsgi
+    command: snap-openstack launch nova-uwsgi
     daemon: simple
 #    plugs:
 #      - network-bind
   nova-api:
-    command: snap-openstack nova-api-os-compute
+    command: snap-openstack launch nova-api-os-compute
     daemon: simple
 #    plugs:
 #      - network-bind
   nova-conductor:
-    command: snap-openstack nova-conductor
+    command: snap-openstack launch nova-conductor
     daemon: simple
 #    plugs:
 #      - network
   nova-scheduler:
-    command: snap-openstack nova-scheduler
+    command: snap-openstack launch nova-scheduler
     daemon: simple
 #    plugs:
 #      - network
   nova-compute:
-    command: snap-openstack nova-compute
+    command: snap-openstack launch nova-compute
     daemon: simple
 #    plugs:
 #      - network-bind
@@ -69,24 +69,24 @@ apps:
 #      - libvirt
 #      - openvswitch
   nova-api-metadata:
-    command: snap-openstack nova-api-metadata
+    command: snap-openstack launch nova-api-metadata
     daemon: simple
 #    plugs:
 #      - network-bind
 #      - firewall-control
   nova-manage:
-    command: snap-openstack nova-manage
+    command: snap-openstack launch nova-manage
 #    plugs:
 #      - network
 
   # Neutron
   neutron-api:
-    command: snap-openstack neutron-server
+    command: snap-openstack launch neutron-server
     daemon: simple
 #    plugs:
 #      - network-bind
   neutron-openvswitch-agent:
-    command: snap-openstack neutron-openvswitch-agent
+    command: snap-openstack launch neutron-openvswitch-agent
     daemon: simple
 #    plugs:
 #      - network-bind
@@ -97,7 +97,7 @@ apps:
 #      - system-observe
 #      - openvswitch
   neutron-l3-agent:
-    command: snap-openstack neutron-l3-agent
+    command: snap-openstack launch neutron-l3-agent
     daemon: simple
 #    plugs:
 #      - network-bind
@@ -108,7 +108,7 @@ apps:
 #      - system-observe
 #      - openvswitch
   neutron-dhcp-agent:
-    command: snap-openstack neutron-dhcp-agent
+    command: snap-openstack launch neutron-dhcp-agent
     daemon: simple
 #    plugs:
 #      - network
@@ -119,48 +119,48 @@ apps:
 #      - system-observe
 #      - openvswitch
   neutron-metadata-agent:
-    command: snap-openstack neutron-metadata-agent
+    command: snap-openstack launch neutron-metadata-agent
     daemon: simple
 #    plugs:
 #      - network
 #      - network-bind
 #      - network-control
   neutron-ovs-cleanup:
-    command: snap-openstack neutron-ovs-cleanup
+    command: snap-openstack launch neutron-ovs-cleanup
 #    plugs:
 #      - network
 #      - network-control
 #      - openvswitch
   neutron-netns-cleanup:
-    command: snap-openstack neutron-netns-cleanup
+    command: snap-openstack launch neutron-netns-cleanup
 #    plugs:
 #      - network
 #      - network-control
   neutron-db-manage:
-    command: snap-openstack neutron-db-manage
+    command: snap-openstack launch neutron-db-manage
 #    plugs:
 #      - network
 
   # Glance
   glance-api:
-    command: snap-openstack glance-api
+    command: snap-openstack launch glance-api
     daemon: simple
 #    plugs:
 #      - network-bind
   registry:
-    command: snap-openstack glance-registry
+    command: snap-openstack launch glance-registry
     daemon: simple
 #    plugs:
 #      - network
 #      - network-bind
   glance-manage:
-    command: snap-openstack glance-manage
+    command: snap-openstack launch glance-manage
 #    plugs:
 #      - network
 
   # Openstack Shared Services
   nginx:
-    command: snap-openstack nginx
+    command: snap-openstack launch nginx
     daemon: forking
 #    plugs:
 #      - network-bind
@@ -269,33 +269,33 @@ apps:
 
   # Cinder
   cinder-uwsgi:
-    command: snap-openstack cinder-uwsgi
+    command: snap-openstack launch cinder-uwsgi
 #    daemon: simple
 #    plugs:
 #      - network-bind
   cinder-backup:
-    command: snap-openstack cinder-backup
+    command: snap-openstack launch cinder-backup
 #    daemon: simple
 #    plugs:
 #      - network
   cinder-manage:
-    command: snap-openstack cinder-manage
+    command: snap-openstack launch cinder-manage
 #    plugs:
 #      - network
   cinder-scheduler:
-    command: snap-openstack cinder-scheduler
+    command: snap-openstack launch cinder-scheduler
 #    daemon: simple
 #    plugs:
 #      - network
   cinder-volume:
-    command: snap-openstack cinder-volume
+    command: snap-openstack launch cinder-volume
 #    daemon: simple
 #    plugs:
 #      - network
 
   # Horizon
   horizon-uwsgi:
-    command: snap-openstack horizon-uwsgi
+    command: snap-openstack launch horizon-uwsgi
     daemon: simple
 #    plugs:
 #      - network-bind
