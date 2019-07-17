@@ -317,10 +317,22 @@ apps:
 #      - network
 
 parts:
+  uca-sources:
+    plugin: nil
+    build-packages:
+      - ubuntu-cloud-keyring
+      - software-properties-common
+    override-build: |
+      add-apt-repository cloud-archive:rocky
+      apt update
+      snapcraftctl build
+
   # OpenStack Python Projects, keyed off Keystone
   openstack-projects:
     plugin: python
     python-version: python2
+    after:
+      - uca-sources
     constraints:
       - https://raw.githubusercontent.com/openstack/requirements/stable/rocky/upper-constraints.txt
     source: http://tarballs.openstack.org/keystone/keystone-stable-rocky.tar.gz
@@ -459,6 +471,7 @@ parts:
     build-packages:
       - libssl-dev
       - try: [libnuma-dev]
+      - try: [libdpdk-dev]
       - libcap-ng-dev
       - libpcap-dev
       - libunbound-dev
@@ -471,8 +484,10 @@ parts:
     configflags:
       - "--localstatedir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common"
       - "--sysconfdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/etc"
+      - "--with-dpdk"
     after:
       - patches
+      - uca-sources
     override-build: |
       # Apply patches
       for patch in ${SNAPCRAFT_STAGE}/patches/openvswitch/*.patch; do
@@ -535,6 +550,7 @@ parts:
     plugin: autotools
     after:
       - openstack-projects
+      - uca-sources
     stage-packages:
       - seabios
       - ipxe-qemu
@@ -639,7 +655,10 @@ parts:
   libvirt:
     source: .
     source-subdir: libvirt-4.0.0
-    after: [openstack-projects, qemu]
+    after:
+      - openstack-projects
+      - qemu
+      - uca-sources
     plugin: autotools
     build-packages:
     - libxml2-dev
