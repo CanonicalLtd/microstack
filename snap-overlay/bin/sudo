@@ -1,5 +1,0 @@
-#!/bin/bash
-# fake sudo script - as daemons run as root use of real sudo is not required
-# strip sudo off args and re-exec command
-
-${@}
